@@ -46,28 +46,30 @@ A mutable struct representing the constants used in the LES study setup.
     Ly :: Float64 = 200kilometers
     Lz :: Float64 = 200meters
     Lf :: Float64 = 8kilometers
+    cp :: Float64 = 3946
      θ :: Float64 = 0.25e-4
      f :: Float64 = 1e-4
     τw :: Float64 = 0.1
      α :: Float64 = 2e-4
-    Jᵀ :: Float64 = 0
+     Q :: Float64 = 0
 end
 
 Base.show(io::IO, c::ProblemConstants) =
-    print(io, "├── Δρ: ", c.Δρ, "\n",
-              "├── ρ₀: ", c.ρ₀, "\n",
-              "├── N²: ", c.N², "\n",
-              "├── Δh: ", c.Δh, "\n",
-              "├── Δz: ", c.Δz, "\n",
-              "├── Lx: ", c.Lx, "\n",
-              "├── Ly: ", c.Ly, "\n",
-              "├── Lz: ", c.Lz, "\n",
-              "├── Lf: ", c.Lf, "\n",
-              "├──  θ: ", c.θ,  "\n",
-              "├──  f: ", c.f,  "\n",
-              "├── τw: ", c.τw, "\n",
-              "├──  α: ", c.α,  "\n",
-              "└── Jᵀ: ", c.Jᵀ, "\n")
+    print(io, "├── density difference:     Δρ = ", c.Δρ, "\n",
+              "├── reference density:      ρ₀ = ", c.ρ₀, "\n",
+              "├── heat capacity:          cp = ", c.cp, "\n",
+              "├── initial stratification: N² = ", c.N², "\n",
+              "├── horizontal spacing:     Δh = ", c.Δh, "\n",
+              "├── vertical spacing:       Δz = ", c.Δz, "\n",
+              "├── x-domain size:          Lx = ", c.Lx, "\n",
+              "├── y-domain size:          Ly = ", c.Ly, "\n",
+              "├── z-domain size:          Lz = ", c.Lz, "\n",
+              "├── frontal width:          Lf = ", c.Lf, "\n",
+              "├── maximum confluence       θ = ", c.θ,  "\n",
+              "├── Coriolis parameter:      f = ", c.f,  "\n",
+              "├── wind stress:            τw = ", c.τw, "\n",
+              "├── thermal expansion:       α = ", c.α,  "\n",
+              "└── heat flux:               Q = ", c.Q, "\n")
 
 # The constants of the idealized setup
 const problem_constants = ProblemConstants()

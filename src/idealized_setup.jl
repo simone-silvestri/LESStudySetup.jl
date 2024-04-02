@@ -33,6 +33,7 @@ function idealized_setup(arch;
      α = problem_constants.α
      f = problem_constants.f  
     ρ₀ = problem_constants.ρ₀
+    cₚ = problem_constants.cₚ
     τw = problem_constants.τw 
     Jᵀ = problem_constants.Jᵀ
 
@@ -55,7 +56,7 @@ function idealized_setup(arch;
                                   constant_salinity = 35)
     
     u_top = FluxBoundaryCondition(τw / ρ₀)
-    T_top = FluxBoundaryCondition(Jᵀ)
+    T_top = FluxBoundaryCondition(Jᵀ / ρ₀ / cₚ)
 
     u_bcs = FieldBoundaryConditions(top = u_top)
     T_bcs = FieldBoundaryConditions(top = T_top)
