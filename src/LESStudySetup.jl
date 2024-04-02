@@ -1,6 +1,6 @@
 module LESStudySetup
 
-export problem_constants
+export parameters
 export idealized_setup
 export set_value!, set!
 
@@ -72,11 +72,11 @@ Base.show(io::IO, c::ProblemConstants) =
               "└── heat flux:               Q = ", c.Q, "\n")
 
 # The constants of the idealized setup
-const problem_constants = ProblemConstants()
+const parameters = ProblemConstants()
 
 # Setting problem constants
-set_value!(; kwargs...)      = set!(problem_constants; kwargs...)
-set_value!(var::Symbol, val) = problem_constants[var] = val
+set_value!(; kwargs...)      = set!(parameters; kwargs...)
+set_value!(var::Symbol, val) = parameters[var] = val
 
 Base.getindex(c::ProblemConstants, var::Symbol)     = @eval $c.$var
 Base.setindex!(c::ProblemConstants, v, var::Symbol) = @eval $c.$var = $v

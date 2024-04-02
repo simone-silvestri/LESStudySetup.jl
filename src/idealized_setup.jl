@@ -25,17 +25,17 @@ function idealized_setup(arch;
                          hydrostatic_approximation = true)
     
     # Retrieving the problem constants
-    Δh = problem_constants.Δh 
-    Δz = problem_constants.Δz 
-    Lx = problem_constants.Lx 
-    Ly = problem_constants.Ly 
-    Lz = problem_constants.Lz 
-     α = problem_constants.α
-     f = problem_constants.f  
-    ρ₀ = problem_constants.ρ₀
-    cₚ = problem_constants.cₚ
-    τw = problem_constants.τw 
-    Jᵀ = problem_constants.Jᵀ
+    Δh = parameters.Δh 
+    Δz = parameters.Δz 
+    Lx = parameters.Lx 
+    Ly = parameters.Ly 
+    Lz = parameters.Lz 
+     α = parameters.α
+     f = parameters.f  
+    ρ₀ = parameters.ρ₀
+    cₚ = parameters.cp
+    τw = parameters.τw 
+     Q = parameters.Q
 
     Nx = ceil(Int, Lx / Δh)
     Ny = ceil(Int, Ly / Δh)
@@ -56,7 +56,7 @@ function idealized_setup(arch;
                                   constant_salinity = 35)
     
     u_top = FluxBoundaryCondition(τw / ρ₀)
-    T_top = FluxBoundaryCondition(Jᵀ / ρ₀ / cₚ)
+    T_top = FluxBoundaryCondition(Q / ρ₀ / cₚ) # Positive fluxes at the top are cooling in Oceananigans
 
     u_bcs = FieldBoundaryConditions(top = u_top)
     T_bcs = FieldBoundaryConditions(top = T_top)
