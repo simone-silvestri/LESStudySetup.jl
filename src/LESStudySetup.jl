@@ -89,6 +89,7 @@ function set!(c::ProblemConstants; kwargs...)
     return nothing
 end
 
+include("utils.jl")
 include("initial_conditions.jl")
 include("idealized_setup.jl")
 
