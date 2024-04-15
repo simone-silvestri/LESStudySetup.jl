@@ -35,6 +35,7 @@ function idealized_setup(arch;
     ρ₀ = parameters.ρ₀
     cₚ = parameters.cp
     τw = parameters.τw 
+     θ = parameters.θ
      Q = parameters.Q
 
     Nx = ceil(Int, Lx / Δh)
@@ -55,13 +56,15 @@ function idealized_setup(arch;
     buoyancy = SeawaterBuoyancy(; equation_of_state = LinearEquationOfState(thermal_expansion = α), 
                                   constant_salinity = 35)
     
-    u_top = FluxBoundaryCondition(τw / ρ₀)
+    u_top = FluxBoundaryCondition(τw * cosd(θ) / ρ₀)
+    v_top = FluxBoundaryCondition(τw * sind(θ) / ρ₀)
     T_top = FluxBoundaryCondition(Q / ρ₀ / cₚ) # Positive fluxes at the top are cooling in Oceananigans
 
     u_bcs = FieldBoundaryConditions(top = u_top)
+    v_bcs = FieldBoundaryConditions(top = v_top)
     T_bcs = FieldBoundaryConditions(top = T_top)
 
-    boundary_conditions = (u = u_bcs, T = T_bcs)
+    boundary_conditions = (u = u_bcs, v = v_bcs, T = T_bcs)
     
     model = ModelType(; grid, 
                         coriolis,
@@ -69,7 +72,7 @@ function idealized_setup(arch;
                         boundary_conditions,
                         kwargs...)
 
-    set!(model, u = uᵢ, v = vᵢ, T = Tᵢ)
+    set!(model, u = U̅, v = V̅, T = Tᵢ)
 
     u, v, w = model.velocities
 

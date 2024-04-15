@@ -5,10 +5,10 @@ using LESStudySetup.Oceananigans.Units
 architecture = CPU()
 
 # Setting some initial values (Q = heat flux in W/m², Δz = vertical spacing)
-set_value!(Q = 100, Δz = 5)
+set_value!(Q = 100, Δz = 4)
 
 # Show all the parameters we are using
-@info parameters
+@info "Simulation parameters: " parameters
 
 # Let's start with an hydrostatic setup running for 30 days
 stop_time  = 30days
