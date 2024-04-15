@@ -37,39 +37,49 @@ A mutable struct representing the constants used in the LES study setup.
 - `Jᵀ::Float64`: Heat flux at the top.
 """
 @kwdef mutable struct ProblemConstants
-    Δρ :: Float64 = 0.25
-    ρ₀ :: Float64 = 1029
-    N² :: Float64 = 5e-6 
+    ΔT :: Float64 = 0.25
+    ρ₀ :: Float64 = 1020
+    T₀ :: Float64 = 5
+    cp :: Float64 = 3900
+    N² :: Float64 = 2e-6
+     H :: Float64 = 50
+    ΔH :: Float64 = 5
     Δh :: Float64 = 1kilometers
     Δz :: Float64 = 10meters
     Lx :: Float64 = 100kilometers
     Ly :: Float64 = 200kilometers
-    Lz :: Float64 = 200meters
-    Lf :: Float64 = 8kilometers
-    cp :: Float64 = 3946
-     θ :: Float64 = 0.25e-4
+    Lz :: Float64 = 250meters
      f :: Float64 = 1e-4
     τw :: Float64 = 0.1
-     α :: Float64 = 2e-4
+     θ :: Float64 = 30
      Q :: Float64 = 0
+     α :: Float64 = 2e-4
+    Lf :: Float64 = 1
+    σ² :: Float64 = 0.15
+     g :: Float64 = Oceananigans.BuoyancyModels.g_Earth
 end
 
 Base.show(io::IO, c::ProblemConstants) =
-    print(io, "├── density difference:     Δρ = ", c.Δρ, "\n",
+    print(io, "├── temperature difference: ΔT = ", c.ΔT, "\n",
               "├── reference density:      ρ₀ = ", c.ρ₀, "\n",
+              "├── surface temperature:    T₀ = ", c.T₀, "\n",
               "├── heat capacity:          cp = ", c.cp, "\n",
-              "├── initial stratification: N² = ", c.N², "\n",
+              "├── initial stratification  N² = ", c.N², "\n",
+              "├── thermocline depth        H = ", c.H, "\n",
+              "├── thermocline extent      ΔH = ", c.ΔH, "\n",
               "├── horizontal spacing:     Δh = ", c.Δh, "\n",
               "├── vertical spacing:       Δz = ", c.Δz, "\n",
               "├── x-domain size:          Lx = ", c.Lx, "\n",
               "├── y-domain size:          Ly = ", c.Ly, "\n",
               "├── z-domain size:          Lz = ", c.Lz, "\n",
-              "├── frontal width:          Lf = ", c.Lf, "\n",
-              "├── maximum confluence       θ = ", c.θ,  "\n",
               "├── Coriolis parameter:      f = ", c.f,  "\n",
               "├── wind stress:            τw = ", c.τw, "\n",
+              "├── wind angle               θ = ", c.θ,  "\n",
+              "├── heat flux:               Q = ", c.Q,  "\n", 
               "├── thermal expansion:       α = ", c.α,  "\n",
-              "└── heat flux:               Q = ", c.Q, "\n")
+              "├── gravity:                 g = ", c.g,  "\n",
+              "├── Initial vortex spread:  σ² = ", c.σ², "\n",
+              "└── Frontal width:          Lf = ", c.Lf, "\n")
 
 # The constants of the idealized setup
 const parameters = ProblemConstants()
