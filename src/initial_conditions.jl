@@ -83,7 +83,7 @@ function Tᵢ(x, y, z)
 
     dTdz_thermocline   = N² * 10 / (α * g)
     dTdz               = N² / (α * g)
-    
+        
     if z ≥ - H
         return T_surface + dTdz * z
     elseif - H - ΔH ≤ z ≤ - H

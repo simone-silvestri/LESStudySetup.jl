@@ -45,7 +45,7 @@ function idealized_setup(arch;
                            size = (Nx, Ny, Nz), 
                            x = (0, Lx), 
                            y = (0, Ly), 
-                           z = (0, Lz),
+                           z = (-Lz, 0),
                            halo = (4, 4, 4))
 
     ModelType = model_type(Val(hydrostatic_approximation))
