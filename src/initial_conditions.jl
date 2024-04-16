@@ -2,15 +2,15 @@
 #### Double temperature front
 ####
 
-@inline transformX(x, y) = x ≤ parameters.Lx / 2 ? 
-                          2x / parameters.Lx * π * (1 + parameters.Lf) - π/2 * parameters.Lf :
-                          2(parameters.Lx - x) / parameters.Lx * π * (1 + parameters.Lf) - π/2 * parameters.Lf
+@inline transformX(x) = x ≤ parameters.Lx / 2 ? 
+                        2x / parameters.Lx * π * (1 + parameters.Lf) - π/2 * parameters.Lf :
+                        2(parameters.Lx - x) / parameters.Lx * π * (1 + parameters.Lf) - π/2 * parameters.Lf
 
 """ background temperature """
 @inline function T̅(x, y, z) 
     ΔT = parameters.ΔT 
     T₀ = parameters.T₀
-    ξ = transformX(x, y)
+    ξ = transformX(x)
     T = ifelse(ξ < 0, 0, ifelse(ξ > π, 1, 1 - (π - ξ - sin(π - ξ) * cos(π - ξ)) / π))
     return ΔT * T + T₀
 end
@@ -31,7 +31,7 @@ end
     ΔT = parameters.ΔT
     g  = parameters.g
     
-    ξ = transformX(x, y)
+    ξ = transformX(x)
     ∂b∂ξ = ifelse(ξ < 0, 0, ifelse(ξ > π, 0, (sin(ξ)^2 - cos(ξ)^2 + 1) / π))
     ∂ξ∂x = 2π / parameters.Lx
 

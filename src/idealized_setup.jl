@@ -56,9 +56,11 @@ function idealized_setup(arch;
     buoyancy = SeawaterBuoyancy(; equation_of_state = LinearEquationOfState(thermal_expansion = α), 
                                   constant_salinity = 35)
     
+    @inline Qtop(x, y, z, t, p) = p.Q / p.ρ₀ / p.cₚ * cos(2π * x / p.Lx)
+
     u_top = FluxBoundaryCondition(τw * cosd(θ) / ρ₀)
     v_top = FluxBoundaryCondition(τw * sind(θ) / ρ₀)
-    T_top = FluxBoundaryCondition(Q / ρ₀ / cₚ) # Positive fluxes at the top are cooling in Oceananigans
+    T_top = FluxBoundaryCondition(Qtop, parameters = (; Q, Lx, cₚ, ρ₀)) # Positive fluxes at the top are cooling in Oceananigans
 
     u_bcs = FieldBoundaryConditions(top = u_top)
     v_bcs = FieldBoundaryConditions(top = v_top)
