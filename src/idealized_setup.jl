@@ -38,10 +38,12 @@ function idealized_setup(arch;
      θ = parameters.θ
      Q = parameters.Q
 
+    # Calculating the grid-size
     Nx = ceil(Int, Lx / Δh)
     Ny = ceil(Int, Ly / Δh)
     Nz = ceil(Int, Lz / Δz)
 
+    # Constructing the grid
     grid = RectilinearGrid(arch, 
                            size = (Nx, Ny, Nz), 
                            x = (0, Lx), 
@@ -49,6 +51,7 @@ function idealized_setup(arch;
                            z = (-Lz, 0),
                            halo = (4, 4, 4))
 
+    # ModelType can be either a `HydrostaticFreeSurfaceModel` or a `NonhydrostaticModel`
     ModelType = model_type(Val(hydrostatic_approximation))
     kwargs    = model_specific_kwargs(Val(hydrostatic_approximation))
 
