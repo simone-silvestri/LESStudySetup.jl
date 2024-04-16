@@ -12,7 +12,7 @@ set_value!(Q = 100, Δz = 4)
 
 # Let's start with an hydrostatic setup running for 30 days
 stop_time  = 30days
-simulation = idealized_setup(architecture; stop_time)
+simulation = idealized_setup(architecture; stop_time, hydrostatic_approximation = true)
 
 # Show the configuration of the simulation
 @info simulation
