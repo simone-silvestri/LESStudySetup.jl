@@ -60,7 +60,7 @@ function idealized_setup(arch;
                                   constant_salinity = 35)
     
     # Cooling in the middle of the domain and heating outside?
-    @inline Qtop(x, y, t, p) = p.Q / p.ρ₀ / p.cₚ * cos(2π * x / p.Lx)
+    @inline Qtop(x, y, t, p) = - p.Q / p.ρ₀ / p.cₚ * cos(2π * x / p.Lx)
 
     u_top = FluxBoundaryCondition(τw * cosd(θ) / ρ₀)
     v_top = FluxBoundaryCondition(τw * sind(θ) / ρ₀)
