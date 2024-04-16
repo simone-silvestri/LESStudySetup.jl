@@ -20,12 +20,14 @@ norm_y(y) = 2 * (y - parameters.Ly / 2) / parameters.Ly # from -1 to 1
 
 @inline η(x, y) = exp(-(norm_x(x)^2 + norm_y(y)^2) ./ parameters.σ²) 
 
+""" background and initial zonal velocity """
 @inline function U̅(x, y, z)
     f = parameters.f
     g = parameters.g
     return - g * 2 * norm_y(y) * η(x, y) / f / parameters.Ly * 2
 end
 
+""" background and initial meridional velocity """
 @inline function V̅(x, y, z)
     f  = parameters.f
     ΔT = parameters.ΔT
