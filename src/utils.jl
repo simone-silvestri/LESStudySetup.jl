@@ -1,13 +1,18 @@
 model_type(::Val{true})  = HydrostaticFreeSurfaceModel
 model_type(::Val{false}) = NonhydrostaticModel
 
-model_specific_kwargs(::Val{true})  = (; momentum_advection = WENO(; order = 7),
-                                         tracer_advection = WENO(; order = 7),
-                                         closure = CATKEVerticalDiffusivity(),
-                                         tracers = (:T, :e))
+function model_specific_kwargs(::Val{true})
+    
+    momentum_advection = WENO(; order = 7)
+    tracer_advection = WENO(; order = 7)
+    closure = CATKEVerticalDiffusivity()
+    tracers = (:T, :e)
 
-model_advection(::Val{false}) = (; advection = WENO(; order = 7), 
-                                   tracers = :T)
+    return (; momentum_advection, tracer_advection, tracers, closure)
+end
+
+model_specific_kwargs(::Val{false}) = (; advection = WENO(; order = 7), 
+                                         tracers = :T)
 
 function progress(sim) 
     u, v, w = sim.model.velocities

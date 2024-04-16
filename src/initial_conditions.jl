@@ -1,39 +1,10 @@
-# #####
-# ##### Background Fields
-# #####
-
-# @inline transform(x, y) = (x^2 + y^2) * 2π - π/2
-
-# """ background temperature """
-# @inline function T̄(x, y, z) 
-#     ΔT = parameters.ΔT 
-
-#     ξ = transform(x, y)
-#     T = ifelse(ξ < 0, 0, ifelse(ξ > π, 1, 1 - (π - ξ - sin(π - ξ) * cos(π - ξ)) / π))
-#     return ΔT * T
-# end
-
-# """ background zonal velocity """
-# @inline function Ū(x, y, z) 
-#     ξ = transform(x, y)
-#     ∂b∂ξ = ifelse(ξ < 0, 0, ifelse(ξ > π, 0, (sin(ξ)^2 - cos(ξ)^2 + 1) / π))
-#     ∂ξ∂y = 2y * 2π
-#     return - 1 / f * ∂b∂ξ * ∂ξ∂y
-# end
-
-# """ background meridional velocity """
-# @inline function V̄(x, y, z) 
-#     ξ = transform(x, y)
-#     ∂b∂ξ = ifelse(ξ < 0, 0, ifelse(ξ > π, 0, (sin(ξ)^2 - cos(ξ)^2 + 1) / π))
-#     ∂ξ∂x = 2x * 2π
-#     return 1 / f * ∂b∂ξ * ∂ξ∂x
-# end
-
 ####
-#### Barotropic ones
+#### Double temperature front
 ####
 
-@inline transformX(x, y) = (x / parameters.Lx * π * (1 + parameters.Lf) - π/2 * parameters.Lf)
+@inline transformX(x, y) = x ≤ parameters.Lx / 2 ? 
+                          2x / parameters.Lx * π * (1 + parameters.Lf) - π/2 * parameters.Lf :
+                          2(parameters.Lx - x) / parameters.Lx * π * (1 + parameters.Lf) - π/2 * parameters.Lf
 
 """ background temperature """
 @inline function T̅(x, y, z) 
