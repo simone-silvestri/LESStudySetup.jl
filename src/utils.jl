@@ -1,7 +1,7 @@
 model_type(::Val{true})  = HydrostaticFreeSurfaceModel
 model_type(::Val{false}) = NonhydrostaticModel
 
-function model_specific_kwargs(::Val{true})
+function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
     
     momentum_advection = WENO(; order = 7)
     tracer_advection = WENO(; order = 7)
@@ -11,8 +11,25 @@ function model_specific_kwargs(::Val{true})
     return (; momentum_advection, tracer_advection, tracers, closure)
 end
 
-model_specific_kwargs(::Val{false}) = (; advection = WENO(; order = 7), 
-                                         tracers = :T)
+function model_settings(::Type{NonhydrostaticModel}, grid) 
+    advection = WENO(; order = 7)
+    tracers = :T
+
+    @inline Tb(x, y, z, t) = T̅(x, y, z)
+    @inline Ub(x, y, z, t) = U̅(x, y, z)
+    @inline Vb(x, y, z, t) = V̅(x, y, z)
+
+    T = BackgroundField(Tb)
+    U = BackgroundField(Tb)
+    V = BackgroundField(Tb)
+
+    background_fields = (; u = U, v = V, T)
+
+    return (; advection, tracers, background_fields)
+end
+
+set_model!(model::HydrostaticFreeSurfaceModel) = set!(model, u = U̅, v = V̅, T = Tᵢ)
+set_model!(model::NonhydrostaticModel) = set!(model, T = Tᵢ)
 
 function progress(sim) 
     u, v, w = sim.model.velocities

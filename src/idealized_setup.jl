@@ -53,7 +53,7 @@ function idealized_setup(arch;
 
     # ModelType can be either a `HydrostaticFreeSurfaceModel` or a `NonhydrostaticModel`
     ModelType = model_type(Val(hydrostatic_approximation))
-    kwargs    = model_specific_kwargs(Val(hydrostatic_approximation))
+    settings  = model_settings(ModelType, grid)
 
     coriolis = FPlane(; f)
     buoyancy = SeawaterBuoyancy(; equation_of_state = LinearEquationOfState(thermal_expansion = α), 
@@ -76,9 +76,9 @@ function idealized_setup(arch;
                         coriolis,
                         buoyancy,
                         boundary_conditions,
-                        kwargs...)
+                        settings...)
 
-    set!(model, u = U̅, v = V̅, T = Tᵢ)
+    set_model!(model)
 
     u, v, w = model.velocities
 
