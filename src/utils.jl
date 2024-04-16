@@ -1,3 +1,5 @@
+using Oceananigans.Grids: node
+
 model_type(::Val{true})  = HydrostaticFreeSurfaceModel
 model_type(::Val{false}) = NonhydrostaticModel
 
@@ -8,7 +10,22 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
     closure = CATKEVerticalDiffusivity()
     tracers = (:T, :e)
 
-    return (; momentum_advection, tracer_advection, tracers, closure)
+    @inline function Ur(i, j, k, grid, clock, fields, p) 
+        x, y, z = node(i, j, k, grid, Face(), Center(), Center())
+        return 1 / p.λ * (fields.u[i, j, k] - U̅(x, y, z))
+    end
+
+    @inline function Vr(i, j, k, grid, clock, fields, p) 
+        x, y, z = node(i, j, k, grid, Center(), Face(), Center())
+        return 1 / p.λ * (fields.v[i, j, k] - V̅(x, y, z))
+    end
+
+    Fu = Forcing(Ur, discrete_form=true, parameters = (; λ = 10days))
+    Fv = Forcing(Vr, discrete_form=true, parameters = (; λ = 10days))
+
+    forcing = (; u = Fu, v = Fv)
+
+    return (; momentum_advection, tracer_advection, tracers, forcing, closure)
 end
 
 function model_settings(::Type{NonhydrostaticModel}, grid) 
