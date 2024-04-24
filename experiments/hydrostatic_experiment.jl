@@ -2,10 +2,10 @@ using LESStudySetup
 using LESStudySetup.Oceananigans.Units
 
 # Architecture (CPU, GPU, or Distributed)
-architecture = CPU()
+architecture = GPU()
 
 # Setting some initial values (Q = heat flux in W/m², Δz = vertical spacing)
-set_value!(Q = 100, Δz = 4)
+set_value!(Q = 100, Δh = 200, Δz = 2)
 
 # Show all the parameters we are using
 @info "Simulation parameters: " parameters

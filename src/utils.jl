@@ -6,7 +6,7 @@ model_type(::Val{false}) = NonhydrostaticModel
 function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
     
     momentum_advection = WENO(; order = 7)
-    tracer_advection = WENO(; order = 7)
+    tracer_advection   = WENO(; order = 7)
     closure = CATKEVerticalDiffusivity()
     tracers = (:T, :e)
 
@@ -23,9 +23,24 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
     Fu = Forcing(Ur, discrete_form=true, parameters = (; λ = 10days))
     Fv = Forcing(Vr, discrete_form=true, parameters = (; λ = 10days))
 
+    Δh  = parameters.Δh 
+    Lz  = parameters.Lz
+    g   = parameters.g
+
+    maximum_speed = 20 # m / s
+    maximum_Δt    = 0.25 * Δh /  maximum_speed  
+
+    wave_speed    = sqrt(Lz * g)
+    baroclinic_Δt = 0.75 * Δh / wave_speed
+
+    substeps = 2 * ceil(Int, maximum_Δt / baroclinic_Δt)
+
+    @info "running with $substeps substeps"
+    free_surface = SplitExplicitFreeSurface(grid; substeps, gravitational_acceleration = g)
+
     forcing = (; u = Fu, v = Fv)
 
-    return (; momentum_advection, tracer_advection, tracers, forcing, closure)
+    return (; free_surface, momentum_advection, tracer_advection, tracers, forcing, closure)
 end
 
 function model_settings(::Type{NonhydrostaticModel}, grid) 
