@@ -2,52 +2,53 @@
 #### Double temperature front
 ####
 
-@inline transformX(x) = x ≤ parameters.Lx / 2 ? 
-                        2x / parameters.Lx * π * (1 + parameters.Lf) - π/2 * parameters.Lf :
-                        2(parameters.Lx - x) / parameters.Lx * π * (1 + parameters.Lf) - π/2 * parameters.Lf
+@inline transformX(x, p) = x ≤ p.Lx / 2 ? 
+                        2x / p.Lx * π * (1 + p.Lf) - π/2 * p.Lf :
+                        2(p.Lx - x) / p.Lx * π * (1 + p.Lf) - π/2 * p.Lf
 
 """ background temperature """
-@inline function T̅(x, y, z) 
-    ΔT = parameters.ΔT 
-    T₀ = parameters.T₀
-    ξ = transformX(x)
+@inline function T̅(x, y, z, p) 
+    ΔT = p.ΔT 
+    T₀ = p.T₀
+    
+    ξ = transformX(x, p)
     T = ifelse(ξ < 0, 0, ifelse(ξ > π, 1, 1 - (π - ξ - sin(π - ξ) * cos(π - ξ)) / π))
     return ΔT * T + T₀
 end
 
-norm_x(x) = 2 * (x - parameters.Lx / 2) / parameters.Lx # from -1 to 1
-norm_y(y) = 2 * (y - parameters.Ly / 2) / parameters.Ly # from -1 to 1
+norm_x(x, p) = 2 * (x - p.Lx / 2) / p.Lx # from -1 to 1
+norm_y(y, p) = 2 * (y - p.Ly / 2) / p.Ly # from -1 to 1
 
-@inline η(x, y) = exp(-(norm_x(x)^2 + norm_y(y)^2) ./ parameters.σ²) 
+@inline η(x, y, p) = exp(-(norm_x(x, p)^2 + norm_y(y, p)^2) ./ p.σ²) 
 
 """ background and initial zonal velocity """
-@inline function U̅(x, y, z)
-    f = parameters.f
-    g = parameters.g
-    return - g * 2 * norm_y(y) * η(x, y) / f / parameters.Ly * 2
+@inline function U̅(x, y, z, p)
+    f = p.f
+    g = p.g
+    return - g * 2 * norm_y(y, p) * η(x, y, p) / f / p.Ly * 2
 end
 
 """ background and initial meridional velocity """
-@inline function V̅(x, y, z)
-    f  = parameters.f
-    ΔT = parameters.ΔT
-    g  = parameters.g
+@inline function V̅(x, y, z, p)
+    f  = p.f
+    ΔT = p.ΔT
+    g  = p.g
     
-    ξ = transformX(x)
+    ξ = transformX(x, p)
     ∂b∂ξ = ifelse(ξ < 0, 0, ifelse(ξ > π, 0, (sin(ξ)^2 - cos(ξ)^2 + 1) / π))
-    ∂ξ∂x = 2π / parameters.Lx
+    ∂ξ∂x = 2π / p.Lx
 
-    return g * 2 * norm_x(x) * η(x, y) / f / parameters.Lx * 2 + ΔT * ∂b∂ξ * ∂ξ∂x * (parameters.Lz + z)
+    return g * 2 * norm_x(x, p) * η(x, y, p) / f / p.Lx * 2 + ΔT * ∂b∂ξ * ∂ξ∂x * (p.Lz + z)
 end
 
 """ initial temperature field """
-function Tᵢ(x, y, z)
+@inline function Tᵢ(x, y, z, p)
 
-    N² = parameters.N²
-    α  = parameters.α
-    g  = parameters.g
-    H  = parameters.H
-    ΔH = parameters.ΔH
+    N² = p.N²
+    α  = p.α
+    g  = p.g
+    H  = p.H
+    ΔH = p.ΔH
 
     T_surface = T̅(x, y, z)
 

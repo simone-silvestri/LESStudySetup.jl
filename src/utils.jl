@@ -12,22 +12,22 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
 
     @inline function Ur(i, j, k, grid, clock, fields, p) 
         x, y, z = node(i, j, k, grid, Face(), Center(), Center())
-        return 1 / p.λ * (fields.u[i, j, k] - U̅(x, y, z))
+        return 1 / p.λ * (fields.u[i, j, k] - U̅(x, y, z, p.parameters))
     end
 
     @inline function Vr(i, j, k, grid, clock, fields, p) 
         x, y, z = node(i, j, k, grid, Center(), Face(), Center())
-        return 1 / p.λ * (fields.v[i, j, k] - V̅(x, y, z))
+        return 1 / p.λ * (fields.v[i, j, k] - V̅(x, y, z, p.parameters))
     end
 
-    Fu = Forcing(Ur, discrete_form=true, parameters = (; λ = 10days))
-    Fv = Forcing(Vr, discrete_form=true, parameters = (; λ = 10days))
+    Fu = Forcing(Ur, discrete_form=true, parameters = (; λ = 10days, parameters))
+    Fv = Forcing(Vr, discrete_form=true, parameters = (; λ = 10days, parameters))
 
     Δh  = parameters.Δh 
     Lz  = parameters.Lz
     g   = parameters.g
 
-    maximum_speed = 20 # m / s
+    maximum_speed = 2 # m / s
     maximum_Δt    = 0.25 * Δh /  maximum_speed  
 
     wave_speed    = sqrt(Lz * g)
@@ -47,21 +47,27 @@ function model_settings(::Type{NonhydrostaticModel}, grid)
     advection = WENO(; order = 7)
     tracers = :T
 
-    @inline Tb(x, y, z, t) = T̅(x, y, z)
-    @inline Ub(x, y, z, t) = U̅(x, y, z)
-    @inline Vb(x, y, z, t) = V̅(x, y, z)
+    @inline Tb(x, y, z, t, p) = T̅(x, y, z, p)
+    @inline Ub(x, y, z, t, p) = U̅(x, y, z, p)
+    @inline Vb(x, y, z, t, p) = V̅(x, y, z, p)
 
-    T = BackgroundField(Tb)
-    U = BackgroundField(Tb)
-    V = BackgroundField(Tb)
+    T = BackgroundField(Tb; parameters)
+    U = BackgroundField(Ub; parameters)
+    V = BackgroundField(Vb; parameters)
 
     background_fields = (; u = U, v = V, T)
 
     return (; advection, tracers, background_fields)
 end
 
-set_model!(model::HydrostaticFreeSurfaceModel) = set!(model, u = U̅, v = V̅, T = Tᵢ)
-set_model!(model::NonhydrostaticModel) = set!(model, T = Tᵢ)
+@inline Ti(x, y, z, t, p) = Tᵢ(x, y, z, parameters)
+@inline Ui(x, y, z, t, p) =  U̅(x, y, z, parameters)
+@inline Vi(x, y, z, t, p) =  V̅(x, y, z, parameters)
+
+set_model!(model::HydrostaticFreeSurfaceModel) = 
+    set!(model, u = Ui, v = Vi, T = Ti)
+
+set_model!(model::NonhydrostaticModel) = set!(model, T = Ti)
 
 function progress(sim) 
     u, v, w = sim.model.velocities
