@@ -20,8 +20,8 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
         return 1 / p.λ * (fields.v[i, j, k] - V̅(x, y, z, p.parameters))
     end
 
-    Fu = Forcing(Ur, discrete_form=true, parameters = (; λ = 10days, parameters))
-    Fv = Forcing(Vr, discrete_form=true, parameters = (; λ = 10days, parameters))
+    Fu = Forcing(Ur, discrete_form=true, parameters = (; λ = 10days, parameters = gpuify(parameters)))
+    Fv = Forcing(Vr, discrete_form=true, parameters = (; λ = 10days, parameters = gpuify(parameters)))
 
     Δh  = parameters.Δh 
     Lz  = parameters.Lz
@@ -51,18 +51,18 @@ function model_settings(::Type{NonhydrostaticModel}, grid)
     @inline Ub(x, y, z, t, p) = U̅(x, y, z, p)
     @inline Vb(x, y, z, t, p) = V̅(x, y, z, p)
 
-    T = BackgroundField(Tb; parameters)
-    U = BackgroundField(Ub; parameters)
-    V = BackgroundField(Vb; parameters)
+    T = BackgroundField(Tb; parameters = gpuify(parameters))
+    U = BackgroundField(Ub; parameters = gpuify(parameters))
+    V = BackgroundField(Vb; parameters = gpuify(parameters))
 
     background_fields = (; u = U, v = V, T)
 
     return (; advection, tracers, background_fields)
 end
 
-@inline Ti(x, y, z, t, p) = Tᵢ(x, y, z, parameters)
-@inline Ui(x, y, z, t, p) =  U̅(x, y, z, parameters)
-@inline Vi(x, y, z, t, p) =  V̅(x, y, z, parameters)
+@inline Ti(x, y, z, t, p) = Tᵢ(x, y, z, gpuify(parameters))
+@inline Ui(x, y, z, t, p) =  U̅(x, y, z, gpuify(parameters))
+@inline Vi(x, y, z, t, p) =  V̅(x, y, z, gpuify(parameters))
 
 set_model!(model::HydrostaticFreeSurfaceModel) = 
     set!(model, u = Ui, v = Vi, T = Ti)

@@ -33,12 +33,14 @@ end
     f  = p.f
     ΔT = p.ΔT
     g  = p.g
+    Lx = p.Lx
+    Lz = p.Lz
     
     ξ = transformX(x, p)
-    ∂b∂ξ = ifelse(ξ < 0, 0, ifelse(ξ > π, 0, (sin(ξ)^2 - cos(ξ)^2 + 1) / π))
+    ∂b∂ξ = ifelse(ξ < 0, 0, ifelse(ξ > 3.1415, 0, (sin(ξ)^2 - cos(ξ)^2 + 1) / 3.1415))
     ∂ξ∂x = 2π / p.Lx
 
-    return g * 2 * norm_x(x, p) * η(x, y, p) / f / p.Lx * 2 + ΔT * ∂b∂ξ * ∂ξ∂x * (p.Lz + z)
+    return g * 2 * norm_x(x, p) * η(x, y, p) / f / Lx * 2 + ΔT * ∂b∂ξ * ∂ξ∂x * (Lz + z)
 end
 
 """ initial temperature field """
@@ -50,7 +52,7 @@ end
     H  = p.H
     ΔH = p.ΔH
 
-    T_surface = T̅(x, y, z)
+    T_surface = T̅(x, y, z, p)
 
     ## Noise with 8 m decay scale
     Ξ(z) = rand() * exp(z / 8)

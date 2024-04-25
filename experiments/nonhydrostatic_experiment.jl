@@ -5,7 +5,7 @@ using LESStudySetup.Oceananigans.Units
 architecture = CPU()
 
 # Setting some initial values (Q = heat flux in W/m², Δz = vertical spacing)
-set_value!(Q = 100, Δz = 4)
+set_value!(Q = 100, Δh = 200, Δz = 2)
 
 # Show all the parameters we are using
 @info "Simulation parameters: " parameters
@@ -24,7 +24,7 @@ output_fields = merge(model.velocities, model.tracers)
 simulation.output_writers[:snapshots] = JLD2OutputWriter(model, output_fields;
                                                          schedule = TimeInterval(3hours),
                                                          overwrite_existing = true,
-                                                         filename = "hydrostatic_snapshots")
+                                                         filename = "nonhydrostatic_snapshots")
 
 #####
 ##### Let's run!!!!
