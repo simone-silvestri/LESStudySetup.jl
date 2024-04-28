@@ -6,17 +6,17 @@ model_type(::Val{false}) = NonhydrostaticModel
 # Forcing functions for the HydrostaticFreeSurfaceModel
 @inline function Ur(i, j, k, grid, clock, fields, p) 
     x, y, z = node(i, j, k, grid, Face(), Center(), Center())
-    return 1 / p.λ * (fields.u[i, j, k] - U̅(x, y, z, p))
+    return 1 / p.λ * (U̅(x, y, z, p) - fields.u[i, j, k])
 end
 
 @inline function Vr(i, j, k, grid, clock, fields, p) 
     x, y, z = node(i, j, k, grid, Center(), Face(), Center())
-    return 1 / p.λ * (fields.v[i, j, k] - V̅(x, y, z, p))
+    return 1 / p.λ * (V̅(x, y, z, p) - fields.v[i, j, k])
 end
 
 @inline function Tr(i, j, k, grid, clock, fields, p) 
-    x, y, z = node(i, j, k, grid, Center(), Face(), Center())
-    return 1 / p.λ * (fields.T[i, j, k] - T̅(x, y, z, p))
+    x, y, z = node(i, j, k, grid, Center(), Center(), Center())
+    return 1 / p.λ * (T̅(x, y, z, p) - fields.T[i, j, k])
 end
 
 function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
@@ -30,20 +30,8 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
     Fv = Forcing(Vr, discrete_form=true, parameters = merge((; λ = 5days), tuplify(parameters)))
     FT = Forcing(Tr, discrete_form=true, parameters = merge((; λ = 5days), tuplify(parameters)))
 
-    Δh  = parameters.Δh 
-    Lz  = parameters.Lz
-    g   = parameters.g
-
-    maximum_speed = 2 # m / s
-    maximum_Δt    = 0.25 * Δh /  maximum_speed  
-
-    wave_speed    = sqrt(Lz * g)
-    baroclinic_Δt = 0.75 * Δh / wave_speed
-
-    substeps = 2 * ceil(Int, maximum_Δt / baroclinic_Δt)
-
-    @info "running with $substeps substeps"
-    free_surface = SplitExplicitFreeSurface(grid; substeps, gravitational_acceleration = g)
+    free_surface = SplitExplicitFreeSurface(grid; substeps = 75, gravitational_acceleration = parameters.g)
+    @info "running with $(length(free_surface.settings.substepping.averaging_weights)) substeps"
 
     forcing = (; u = Fu, v = Fv, T = FT)
 
@@ -87,7 +75,6 @@ function progress(sim)
     wi = interior(w)
 
     Ti = interior(T)
-    ei = interior(e)
 
     msg0 = @sprintf("Time: %s, iteration: %d, Δt: %s ", prettytime(sim.model.clock.time), 
                                                         sim.model.clock.iteration,
@@ -97,6 +84,7 @@ function progress(sim)
 
     if sim.model isa HydrostaticFreeSurfaceModel
         e = sim.model.tracers.e
+        ei = interior(e)
         msg3 = @sprintf("e: %.2e %.2e ", minimum(ei), maximum(ei))
     else
         msg3 = ""
