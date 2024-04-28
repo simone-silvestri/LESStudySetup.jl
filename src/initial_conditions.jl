@@ -2,18 +2,20 @@
 #### Double temperature front
 ####
 
-@inline transformX(x, p) = x ≤ p.Lx / 2 ? 
-                        2x / p.Lx * π * (1 + p.Lf) - π/2 * p.Lf :
-                        2(p.Lx - x) / p.Lx * π * (1 + p.Lf) - π/2 * p.Lf
+@inline transformX(x, p) = ifelse(x <= p.Lx / 2, 
+                                  2x / p.Lx * π * (1 + p.Lf) - π/2 * p.Lf,
+                                  2(p.Lx - x) / p.Lx * π * (1 + p.Lf) - π/2 * p.Lf)
 
 """ background temperature """
 @inline function T̅(x, y, z, p) 
     ΔT = p.ΔT 
     T₀ = p.T₀
     
-    ξ = transformX(x, p)
-    T = ifelse(ξ < 0, 0, ifelse(ξ > π, 1, 1 - (π - ξ - sin(π - ξ) * cos(π - ξ)) / π))
-    return ΔT * T + T₀
+    ξ  = transformX(x, p)
+    T₃ = 1 - (π - ξ - sin(π - ξ) * cos(π - ξ)) / π
+    Tₘ = Int(ξ < 0) * zero(T₀) + Int(ξ > 3.1415926535897) + one(T₀) + Int(0 < ξ < 3.1415926535897) * T₃
+
+    return ΔT * Tₘ + T₀
 end
 
 norm_x(x, p) = 2 * (x - p.Lx / 2) / p.Lx # from -1 to 1
@@ -37,7 +39,8 @@ end
     Lz = p.Lz
     
     ξ = transformX(x, p)
-    ∂b∂ξ = ifelse(ξ < 0, 0, ifelse(ξ > 3.1415, 0, (sin(ξ)^2 - cos(ξ)^2 + 1) / 3.1415))
+    ∂b∂ξ = (sin(ξ)^2 - cos(ξ)^2 + 1) / π
+    ∂b∂ξ = Int(0 < ξ < 3.1415926535897) * ∂b∂ξ
     ∂ξ∂x = 2π / p.Lx
 
     return g * 2 * norm_x(x, p) * η(x, y, p) / f / Lx * 2 + ΔT * ∂b∂ξ * ∂ξ∂x * (Lz + z)

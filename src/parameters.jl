@@ -54,7 +54,7 @@ Base.show(io::IO, c::ProblemConstants) =
               "├── surface temperature:    T₀ = ", c.T₀, "\n",
               "├── heat capacity:          cp = ", c.cp, "\n",
               "├── initial stratification  N² = ", c.N², "\n",
-              "├── thermocline depth        H = ", c.H, "\n",
+              "├── thermocline depth        H = ", c.H,  "\n",
               "├── thermocline extent      ΔH = ", c.ΔH, "\n",
               "├── horizontal spacing:     Δh = ", c.Δh, "\n",
               "├── vertical spacing:       Δz = ", c.Δz, "\n",
@@ -116,4 +116,5 @@ end
 Adapt.adapt_structure(to, p::ProblemConstants) = 
     GPUProblemConstants(Tuple(getproperty(p, name) for name in propertynames(p))...)
 
-gpuify(p::ProblemConstants) = GPUProblemConstants(Tuple(getproperty(p, name) for name in propertynames(p))...)
+gpuify(p::ProblemConstants)  = GPUProblemConstants(Tuple(getproperty(p, name) for name in propertynames(p))...)
+tuplify(p::ProblemConstants) = NamedTuple{propertynames(parameters)}(Tuple(getproperty(parameters, prop) for prop in propertynames(parameters)))

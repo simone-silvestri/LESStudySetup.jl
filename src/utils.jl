@@ -6,12 +6,12 @@ model_type(::Val{false}) = NonhydrostaticModel
 # Forcing functions for the HydrostaticFreeSurfaceModel
 @inline function Ur(i, j, k, grid, clock, fields, p) 
     x, y, z = node(i, j, k, grid, Face(), Center(), Center())
-    return 1 / p.λ * (fields.u[i, j, k] - U̅(x, y, z, p.parameters))
+    return 1 / p.λ * (fields.u[i, j, k] - U̅(x, y, z, p))
 end
 
 @inline function Vr(i, j, k, grid, clock, fields, p) 
     x, y, z = node(i, j, k, grid, Center(), Face(), Center())
-    return 1 / p.λ * (fields.v[i, j, k] - V̅(x, y, z, p.parameters))
+    return 1 / p.λ * (fields.v[i, j, k] - V̅(x, y, z, p))
 end
 
 function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
@@ -21,8 +21,8 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
     closure = CATKEVerticalDiffusivity()
     tracers = (:T, :e)
 
-    Fu = Forcing(Ur, discrete_form=true, parameters = (; λ = 10days, parameters = gpuify(parameters)))
-    Fv = Forcing(Vr, discrete_form=true, parameters = (; λ = 10days, parameters = gpuify(parameters)))
+    Fu = Forcing(Ur, discrete_form=true, parameters = merge((; λ = 10days), tuplify(parameters)))
+    Fv = Forcing(Vr, discrete_form=true, parameters = merge((; λ = 10days), tuplify(parameters)))
 
     Δh  = parameters.Δh 
     Lz  = parameters.Lz
@@ -41,7 +41,7 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
 
     forcing = (; u = Fu, v = Fv)
 
-    return (; free_surface, momentum_advection, tracer_advection, tracers, closure) #, forcing)
+    return (; free_surface, momentum_advection, tracer_advection, tracers, closure, forcing)
 end
 
 # Background fields for the NonhydrostaticModel
@@ -53,9 +53,9 @@ function model_settings(::Type{NonhydrostaticModel}, grid)
     advection = WENO(; order = 7)
     tracers = :T
 
-    T = BackgroundField(Tb; parameters = gpuify(parameters))
-    U = BackgroundField(Ub; parameters = gpuify(parameters))
-    V = BackgroundField(Vb; parameters = gpuify(parameters))
+    T = BackgroundField(Tb; parameters = tuplify(parameters))
+    U = BackgroundField(Ub; parameters = tuplify(parameters))
+    V = BackgroundField(Vb; parameters = tuplify(parameters))
 
     background_fields = (; u = U, v = V, T)
 

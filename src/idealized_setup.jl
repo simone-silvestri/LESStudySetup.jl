@@ -51,6 +51,8 @@ function idealized_setup(arch;
                            z = (-Lz, 0),
                            halo = (4, 4, 4))
 
+    @info "Running on a grid with $Nx, $Ny, and $Nz cells"
+
     # ModelType can be either a `HydrostaticFreeSurfaceModel` or a `NonhydrostaticModel`
     ModelType = model_type(Val(hydrostatic_approximation))
     settings  = model_settings(ModelType, grid)
@@ -84,7 +86,7 @@ function idealized_setup(arch;
 
     u_max = max(maximum(abs, u), maximum(abs, v))
 
-    Δt = 0.2 * Δh / u_max
+    Δt = min(0.2 * Δh / u_max, 100)
     
     wizard = TimeStepWizard(cfl = 0.25, max_change = 1.1)
 
