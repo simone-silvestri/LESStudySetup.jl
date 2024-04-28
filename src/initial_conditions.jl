@@ -37,13 +37,16 @@ end
     g  = p.g
     Lx = p.Lx
     Lz = p.Lz
+    α  = p.α
+    Lf = p.Lf
     
     ξ = transformX(x, p)
-    ∂b∂ξ = (sin(ξ)^2 - cos(ξ)^2 + 1) / π
+    ∂b∂ξ = - g * α * ΔT * (sin(ξ)^2 - cos(ξ)^2 + 1) / π
     ∂b∂ξ = Int(0 < ξ < 3.1415926535897) * ∂b∂ξ
-    ∂ξ∂x = 2π / p.Lx
+    ∂ξ∂x = 2π / Lx * (1 + Lf)
+    ∂ξ∂x = ifelse(x <= p.Lx / 2, - ∂ξ∂x, ∂ξ∂x)
 
-    return g * 2 * norm_x(x, p) * η(x, y, p) / f / Lx * 2 + ΔT * ∂b∂ξ * ∂ξ∂x * (Lz + z)
+    return g * 2 * norm_x(x, p) * η(x, y, p) / f / Lx * 2 + ∂b∂ξ * ∂ξ∂x * (Lz + z)
 end
 
 """ initial temperature field """
