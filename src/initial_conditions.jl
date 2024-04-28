@@ -13,7 +13,7 @@
     
     ξ  = transformX(x, p)
     T₃ = 1 - (π - ξ - sin(π - ξ) * cos(π - ξ)) / π
-    Tₘ = Int(ξ < 0) * zero(T₀) + Int(ξ > 3.1415926535897) + one(T₀) + Int(0 < ξ < 3.1415926535897) * T₃
+    Tₘ = Int(ξ < 0) * zero(T₀) + Int(ξ > 3.1415926535897) * one(T₀) + Int(0 < ξ < 3.1415926535897) * T₃
 
     return ΔT * Tₘ + T₀
 end
@@ -39,12 +39,12 @@ end
     Lz = p.Lz
     α  = p.α
     Lf = p.Lf
-    
+
     ξ = transformX(x, p)
     ∂b∂ξ = - g * α * ΔT * (sin(ξ)^2 - cos(ξ)^2 + 1) / π
     ∂b∂ξ = Int(0 < ξ < 3.1415926535897) * ∂b∂ξ
     ∂ξ∂x = 2π / Lx * (1 + Lf)
-    ∂ξ∂x = ifelse(x <= p.Lx / 2, - ∂ξ∂x, ∂ξ∂x)
+    ∂ξ∂x = ifelse(x <= p.Lx / 2, ∂ξ∂x, - ∂ξ∂x)
 
     return g * 2 * norm_x(x, p) * η(x, y, p) / f / Lx * 2 + ∂b∂ξ * ∂ξ∂x * (Lz + z)
 end
