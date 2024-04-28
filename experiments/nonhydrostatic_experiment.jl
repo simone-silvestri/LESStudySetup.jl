@@ -6,27 +6,16 @@ using JLD2
 architecture = GPU()
 
 # Setting some initial values (Q = heat flux in W/m², Δz = vertical spacing)
-# set_value!(Δh = 200, Δz = 2)
+set_value!(Δh = 200, Δz = 2)
 
-# all_Q  = [0, 50, 100]
-# all_τw = [0, 0.1, 0.2]
-# all_θ  = [0, 45, 90]
-# all_ΔT = [1, 3, 6]
-# all_Lf = [1, 2, 3]
-# all_N² = [1e-6, 5e-6, 1e-5]
-
-# experiment = 1
-
-# for Q in all_Q, τw in all_τw, θ in all_θ, ΔT in all_ΔT, Lf in all_Lf, N² in all_N²
-
-#     set_value!(; Q, τw, θ, ΔT, Lf, N²)
+set_value!(; Q, τw, θ, ΔT, Lf, N²)
 
     # jldopen("experiment$(experiment)_metadata.jld2", parameters = parameters)
 
     # Show all the parameters we are using
     @info "Simulation parameters: " parameters
 
-    stop_time  = 30days
+    stop_time = 30days
     
     # Let's start with an nonhydrostatic setup running for 30 days
     simulation = idealized_setup(architecture; stop_time)
@@ -48,4 +37,6 @@ architecture = GPU()
     #####
 
     run!(simulation)
-# end
+
+    experiment += 1
+end

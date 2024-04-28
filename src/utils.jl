@@ -14,6 +14,11 @@ end
     return 1 / p.λ * (fields.v[i, j, k] - V̅(x, y, z, p))
 end
 
+@inline function Tr(i, j, k, grid, clock, fields, p) 
+    x, y, z = node(i, j, k, grid, Center(), Face(), Center())
+    return 1 / p.λ * (fields.T[i, j, k] - T̅(x, y, z, p))
+end
+
 function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
     
     momentum_advection = WENO(; order = 7)
@@ -21,8 +26,9 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
     closure = CATKEVerticalDiffusivity()
     tracers = (:T, :e)
 
-    Fu = Forcing(Ur, discrete_form=true, parameters = merge((; λ = 10days), tuplify(parameters)))
-    Fv = Forcing(Vr, discrete_form=true, parameters = merge((; λ = 10days), tuplify(parameters)))
+    Fu = Forcing(Ur, discrete_form=true, parameters = merge((; λ = 5days), tuplify(parameters)))
+    Fv = Forcing(Vr, discrete_form=true, parameters = merge((; λ = 5days), tuplify(parameters)))
+    FT = Forcing(Tr, discrete_form=true, parameters = merge((; λ = 5days), tuplify(parameters)))
 
     Δh  = parameters.Δh 
     Lz  = parameters.Lz
@@ -39,7 +45,7 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
     @info "running with $substeps substeps"
     free_surface = SplitExplicitFreeSurface(grid; substeps, gravitational_acceleration = g)
 
-    forcing = (; u = Fu, v = Fv)
+    forcing = (; u = Fu, v = Fv, T = FT)
 
     return (; free_surface, momentum_advection, tracer_advection, tracers, closure, forcing)
 end
