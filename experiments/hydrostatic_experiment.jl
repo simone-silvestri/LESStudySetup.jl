@@ -5,7 +5,7 @@ using LESStudySetup.Oceananigans.Units
 architecture = GPU()
 
 # Setting some initial values (Q = heat flux in W/m², Δz = vertical spacing)
-set_value!(Q = 100, Δh = 200, Δz = 2)
+set_value!(Q = 100, Δh = 20000, Δz = 20)
 
 # Show all the parameters we are using
 @info "Simulation parameters: " parameters
