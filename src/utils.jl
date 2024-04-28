@@ -74,7 +74,7 @@ end
 @inline Vi(x, y, z) =  V̅(x, y, z, gpuify(parameters))
 
 set_model!(model::HydrostaticFreeSurfaceModel) = 
-    set!(model, u = Ui, v = Vi, T = Ti)
+    set!(model, u = Ui, v = Vi, T = Ti, e = 1e-6)
 
 set_model!(model::NonhydrostaticModel) = set!(model, T = Ti)
 
@@ -82,15 +82,22 @@ function progress(sim)
     u, v, w = sim.model.velocities
     T = sim.model.tracers.T
 
+    ui = interior(u)
+    vi = interior(v)
+    wi = interior(w)
+
+    Ti = interior(T)
+    ei = interior(e)
+
     msg0 = @sprintf("Time: %s, iteration: %d, Δt: %s ", prettytime(sim.model.clock.time), 
                                                         sim.model.clock.iteration,
                                                         prettytime(sim.Δt))
-    msg1 = @sprintf("(u, v, w): %.2e %.2e %.2e ", maximum(u), maximum(v), maximum(w))
-    msg2 = @sprintf("T: %.2e %.2e ", minimum(T), maximum(T))
+    msg1 = @sprintf("(u, v, w): %.2e %.2e %.2e ", maximum(ui), maximum(vi), maximum(wi))
+    msg2 = @sprintf("T: %.2e %.2e ", minimum(Ti), maximum(Ti))
 
     if sim.model isa HydrostaticFreeSurfaceModel
         e = sim.model.tracers.e
-        msg3 = @sprintf("e: %.2e %.2e ", minimum(e), maximum(e))
+        msg3 = @sprintf("e: %.2e %.2e ", minimum(ei), maximum(ei))
     else
         msg3 = ""
     end
