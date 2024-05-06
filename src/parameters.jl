@@ -31,8 +31,8 @@ A mutable struct representing the constants used in the LES study setup.
     T₀ :: Float64 = 5
     cp :: Float64 = 3900
     N² :: Float64 = 2e-6
-     H :: Float64 = 40
-    ΔH :: Float64 = 15
+     H :: Float64 = 50
+    ΔH :: Float64 = 5
     Δh :: Float64 = 1kilometers
     Δz :: Float64 = 4meters
     Lx :: Float64 = 100kilometers

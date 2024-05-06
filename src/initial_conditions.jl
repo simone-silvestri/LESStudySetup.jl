@@ -63,14 +63,14 @@ end
     ## Noise with 8 m decay scale
     Ξ(z) = rand() * exp(z / 8)
 
-    dTdz_thermocline   = N² * 10 / (α * g)
+    dTdz_thermocline   = N² * 5 / (α * g)
     dTdz               = N² / (α * g)
         
     if z ≥ - H
-        return T_surface + dTdz * z
+        return T_surface 
     elseif - H - ΔH ≤ z ≤ - H
-        return T_surface - dTdz * H + dTdz_thermocline * (z + H)
+        return T_surface + dTdz_thermocline * (z + H)
     else
-        return T_surface - dTdz_thermocline * ΔH + dTdz * (z + ΔH)
+        return T_surface - dTdz_thermocline * ΔH + dTdz * (z + ΔH + H)
     end
 end
