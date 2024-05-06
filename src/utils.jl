@@ -19,7 +19,8 @@ end
     return 1 / p.λ * (T̅(x, y, z, p) - fields.T[i, j, k])
 end
 
-function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
+function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid;
+                        restoring = true)
     
     momentum_advection = WENO(; order = 7)
     tracer_advection   = WENO(; order = 7)
@@ -33,7 +34,11 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid)
     free_surface = SplitExplicitFreeSurface(grid; substeps = 75, gravitational_acceleration = parameters.g)
     @info "running with $(length(free_surface.settings.substepping.averaging_weights)) substeps"
 
-    forcing = (; u = Fu, v = Fv, T = FT)
+    forcing = if restoring
+        (; u = Fu, v = Fv, T = FT)
+    else
+        NamedTuple()
+    end
 
     return (; free_surface, momentum_advection, tracer_advection, tracers, closure, forcing)
 end
@@ -43,7 +48,8 @@ end
 @inline Ub(x, y, z, t, p) = U̅(x, y, z, p)
 @inline Vb(x, y, z, t, p) = V̅(x, y, z, p)
 
-function model_settings(::Type{NonhydrostaticModel}, grid) 
+function model_settings(::Type{NonhydrostaticModel}, grid
+                        restoring = true) 
     advection = WENO(; order = 7)
     tracers = :T
 
@@ -51,7 +57,11 @@ function model_settings(::Type{NonhydrostaticModel}, grid)
     U = BackgroundField(Ub; parameters = tuplify(parameters))
     V = BackgroundField(Vb; parameters = tuplify(parameters))
 
-    background_fields = (; u = U, v = V, T)
+    background_fields = if restoring
+        (; u = U, v = V, T)
+    else
+        NamedTuple()
+    end
 
     return (; advection, tracers, background_fields)
 end

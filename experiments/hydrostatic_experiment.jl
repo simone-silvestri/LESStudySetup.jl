@@ -14,15 +14,16 @@ function run_experiment!(experiment;
                          θ  = 0.0, # Wind stress angle in degrees (0 correspond to zonal wind stress)
                          ΔT = 2.0, # Meridional temperature difference
                          Lf = 1.0, # Size of temperature front (large numbers correspond to steeper fronts)
-                         N² = 5e-6)
+                         N² = 5e-6,
+                         restoring = true)
     
     set_value!(; Q, τw, θ, ΔT, Lf, N²)
 
     @info "Simulation parameters: " parameters
 
-    # Let's start with an hydrostatic setup running for 30 days
-    stop_time  = 30days
-    simulation = idealized_setup(architecture; stop_time, hydrostatic_approximation = true)
+    # Let's start with an hydrostatic setup running for 20 days
+    stop_time  = 20days
+    simulation = idealized_setup(architecture; stop_time, hydrostatic_approximation = true, restoring)
 
     jldsave("experiment_$(experiment)_metadata.jld2", parameters = parameters)
 
@@ -36,36 +37,28 @@ function run_experiment!(experiment;
     simulation.output_writers[:snapshots] = JLD2OutputWriter(model, output_fields;
                                                              schedule = TimeInterval(3hours),
                                                              overwrite_existing = true,
-                                                             filename = "hydrostatic_snapshots_exp$(experiment)")
+                                                             array_type = Array{Float32},
+                                                             filename = "hydrostatic_snapshots_$(experiment)")
 
     #####
     ##### Let's run!!!!
     #####
 
     run!(simulation)
+
+    return simulation
 end
 
-# Quiescent experiment
-run_experiment!("quiescent_ΔT2"; ΔT = 2)
-run_experiment!("quiescent_ΔT4"; ΔT = 4)
-run_experiment!("quiescent_ΔT6"; ΔT = 6)
+run_experiment!("constant_cooling_05_wind_0075_30"; Q = 5.0,  τw = 0.075, θ = 30.0)
+run_experiment!("constant_cooling_10_wind_0075_30"; Q = 10.0, τw = 0.075, θ = 30.0)
+run_experiment!("constant_cooling_25_wind_0075_30"; Q = 25.0, τw = 0.075, θ = 30.0)
+run_experiment!("constant_cooling_50_wind_0075_30"; Q = 50.0, τw = 0.075, θ = 30.0)
+run_experiment!("no_cooling_wind_0075_30";          Q = 0.0,  τw = 0.075, θ = 30.0)
+run_experiment!("no_cooling_no_wind";               Q = 0.0,  τw = 0.0,   θ = 30.0)
 
-# Weak Cooling Weak Wind
-run_experiment!("weak_cooling_weak_wind_zonal"; Q = 50.0, τw = 0.075, θ = 0.0)
-run_experiment!("weak_cooling_weak_wind_mixed"; Q = 50.0, τw = 0.075, θ = 45.0)
-run_experiment!("weak_cooling_weak_wind_meridional"; Q = 50.0, τw = 0.075, θ = 90.0)
+# Experiments without restoring, only wind and cooling
+run_experiment!("constant_cooling_10_wind_0075_30_no_restoring"; Q = 10.0, τw = 0.075, θ = 30.0, restoring = false)
 
-# Weak Cooling Strong Wind
-run_experiment!("weak_cooling_strong_wind_zonal"; Q = 50.0, τw = 0.25, θ = 0.0)
-run_experiment!("weak_cooling_strong_wind_mixed"; Q = 50.0, τw = 0.25, θ = 45.0)
-run_experiment!("weak_cooling_strong_wind_meridional"; Q = 50.0, τw = 0.25, θ = 90.0)
 
-# Strong Cooling Weak Wind
-run_experiment!("strong_cooling_weak_wind_zonal"; Q = 350.0, τw = 0.075, θ = 0.0)
-run_experiment!("strong_cooling_weak_wind_mixed"; Q = 350.0, τw = 0.075, θ = 45.0)
-run_experiment!("strong_cooling_weak_wind_meridional"; Q = 350.0, τw = 0.075, θ = 90.0)
 
-# Strong Cooling Strong Wind
-run_experiment!("strong_cooling_strong_wind_zonal"; Q = 350.0, τw = 0.25, θ = 0.0)
-run_experiment!("strong_cooling_strong_wind_mixed"; Q = 350.0, τw = 0.25, θ = 45.0)
-run_experiment!("strong_cooling_strong_wind_meridional"; Q = 350.0, τw = 0.25, θ = 90.0)
+

@@ -22,7 +22,8 @@ Finally, a `Simulation` object is created with the model, time step, and stop ti
 """
 function idealized_setup(arch; 
                          stop_time = 100days,
-                         hydrostatic_approximation = false)
+                         hydrostatic_approximation = false,
+                         restoring = true)
     
     # Retrieving the problem constants
     Δh = parameters.Δh 
@@ -55,18 +56,18 @@ function idealized_setup(arch;
 
     # ModelType can be either a `HydrostaticFreeSurfaceModel` or a `NonhydrostaticModel`
     ModelType = model_type(Val(hydrostatic_approximation))
-    settings  = model_settings(ModelType, grid)
+    settings  = model_settings(ModelType, grid; restoring)
 
     coriolis = FPlane(; f)
     buoyancy = SeawaterBuoyancy(; equation_of_state = LinearEquationOfState(thermal_expansion = α), 
                                   constant_salinity = 35)
     
-    # Cooling in the middle of the domain and heating outside?
-    @inline Qtop(x, y, t, p) = - p.Q / p.ρ₀ / p.cₚ * cos(2π * x / p.Lx)
+    # # Cooling in the middle of the domain and heating outside?
+    # @inline Qtop(x, y, t, p) = - p.Q / p.ρ₀ / p.cₚ * cos(2π * x / p.Lx)
 
     u_top = FluxBoundaryCondition(τw * cosd(θ) / ρ₀)
     v_top = FluxBoundaryCondition(τw * sind(θ) / ρ₀)
-    T_top = FluxBoundaryCondition(Qtop, parameters = (; Q, Lx, cₚ, ρ₀)) # Positive fluxes at the top are cooling in Oceananigans
+    T_top = FluxBoundaryCondition(Q / ρ₀ / cₚ) # Positive fluxes at the top are cooling in Oceananigans
 
     u_bcs = FieldBoundaryConditions(top = u_top)
     v_bcs = FieldBoundaryConditions(top = v_top)
