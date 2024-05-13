@@ -93,6 +93,8 @@ function idealized_setup(arch;
 
     simulation = Simulation(model; Δt, stop_time)
 
+    simulation_callbacks!(simulation, restoring)
+
     simulation.callbacks[:progress] = Callback(progress, IterationInterval(100))
     simulation.callbacks[:wizard] = Callback(wizard, IterationInterval(10))
 

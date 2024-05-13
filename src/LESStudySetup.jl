@@ -14,5 +14,8 @@ include("parameters.jl")
 include("utils.jl")
 include("initial_conditions.jl")
 include("idealized_setup.jl")
+include("Diagnostics/Diagnostics.jl")
+
+using .Diagnostics
 
 end

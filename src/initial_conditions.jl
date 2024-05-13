@@ -49,6 +49,8 @@ end
     return g * 2 * norm_x(x, p) * η(x, y, p) / f / Lx * 2 + ∂b∂ξ * ∂ξ∂x * (Lz + z)
 end
 
+@inline barotropic_T(C, D, H, h, L) = - (C * h^2)/2 + D * h^2 - C * h * H + D * h * H - (C * H^2)/2 + D * (-1/2 * (- h - H)^2 + H^2/2) + C * h * L - D * h * L + C * H * L - (C * L^2)/2 
+
 """ initial temperature field """
 @inline function Tᵢ(x, y, z, p)
 
@@ -57,8 +59,7 @@ end
     g  = p.g
     H  = p.H
     ΔH = p.ΔH
-
-    T_surface = T̅(x, y, z, p)
+    Lz = p.Lz
 
     ## Noise with 8 m decay scale
     Ξ(z) = rand() * exp(z / 8)
@@ -66,6 +67,10 @@ end
     dTdz_thermocline   = N² * 5 / (α * g)
     dTdz               = N² / (α * g)
         
+    column_average = barotropic_T(dTdz, dTdz_thermocline, H, ΔH, Lz) / Lz
+
+    T_surface = T̅(x, y, z, p) - column_average
+
     if z ≥ - H
         return T_surface 
     elseif - H - ΔH ≤ z ≤ - H

@@ -1,4 +1,5 @@
 using Oceananigans.Grids: node
+using Statistics: mean
 
 model_type(::Val{true})  = HydrostaticFreeSurfaceModel
 model_type(::Val{false}) = NonhydrostaticModel
@@ -6,17 +7,17 @@ model_type(::Val{false}) = NonhydrostaticModel
 # Forcing functions for the HydrostaticFreeSurfaceModel
 @inline function Ur(i, j, k, grid, clock, fields, p) 
     x, y, z = node(i, j, k, grid, Face(), Center(), Center())
-    return 1 / p.λ * (U̅(x, y, z, p) - fields.u[i, j, k])
+    return @inbounds 1 / p.λ * (U̅(x, y, z, p) - p.Um[i, j, k])
 end
 
 @inline function Vr(i, j, k, grid, clock, fields, p) 
     x, y, z = node(i, j, k, grid, Center(), Face(), Center())
-    return 1 / p.λ * (V̅(x, y, z, p) - fields.v[i, j, k])
+    return @inbounds 1 / p.λ * (V̅(x, y, z, p) - fields.v[i, j, k])
 end
 
 @inline function Tr(i, j, k, grid, clock, fields, p) 
     x, y, z = node(i, j, k, grid, Center(), Center(), Center())
-    return 1 / p.λ * (T̅(x, y, z, p) - fields.T[i, j, k])
+    return @inbounds 1 / p.λ * (T̅(x, y, z, p) - p.Tm[i, j, k])
 end
 
 function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid;
@@ -27,9 +28,12 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid;
     closure = CATKEVerticalDiffusivity()
     tracers = (:T, :e)
 
-    Fu = Forcing(Ur, discrete_form=true, parameters = merge((; λ = 5days), tuplify(parameters)))
+    Tm = Field{Center, Nothing, Nothing}(grid)
+    Um = Field{Face,   Center,  Nothing}(grid)
+    
+    Fu = Forcing(Ur, discrete_form=true, parameters = merge((; λ = 5days), tuplify(parameters), (; Um)))
     Fv = Forcing(Vr, discrete_form=true, parameters = merge((; λ = 5days), tuplify(parameters)))
-    FT = Forcing(Tr, discrete_form=true, parameters = merge((; λ = 5days), tuplify(parameters)))
+    FT = Forcing(Tr, discrete_form=true, parameters = merge((; λ = 5days), tuplify(parameters), (; Tm)))
 
     free_surface = SplitExplicitFreeSurface(grid; substeps = 75, gravitational_acceleration = parameters.g)
     @info "running with $(length(free_surface.settings.substepping.averaging_weights)) substeps"
@@ -48,7 +52,7 @@ end
 @inline Ub(x, y, z, t, p) = U̅(x, y, z, p)
 @inline Vb(x, y, z, t, p) = V̅(x, y, z, p)
 
-function model_settings(::Type{NonhydrostaticModel}, grid
+function model_settings(::Type{NonhydrostaticModel}, grid;
                         restoring = true) 
     advection = WENO(; order = 7)
     tracers = :T
@@ -75,6 +79,23 @@ set_model!(model::HydrostaticFreeSurfaceModel) =
     set!(model, u = Ui, v = Vi, T = Ti, e = 1e-6)
 
 set_model!(model::NonhydrostaticModel) = set!(model, T = Ti)
+
+simulation_callbacks!(::Simulation{<:NonhydrostaticModel}, args...) = nothing
+
+function simulation_callbacks!(sim::Simulation{<:HydrostaticFreeSurfaceModel}, restoring) 
+    if !restoring
+        return nothing
+    end
+
+    function update_mean!(sim)
+        sim.model.forcing.T.parameters.Tm .= mean(sim.model.tracers.T,    dims = (2, 3))
+        sim.model.forcing.u.parameters.Um .= mean(sim.model.velocities.u, dims = 3)
+    end
+
+    sim.callbacks[:update_mean] = Callback(update_mean!, IterationInterval(10))
+
+    return nothing
+end
 
 function progress(sim) 
     u, v, w = sim.model.velocities

@@ -1,23 +1,25 @@
 using LESStudySetup
 using LESStudySetup.Oceananigans.Units
+using LESStudySetup.Oceananigans.Utils: ConsecutiveIterations
 using JLD2 
 
 # Architecture (CPU, GPU, or Distributed)
 architecture = GPU()
 
 # Setting some initial values (Q = heat flux in W/m², Δz = vertical spacing)
-set_value!(Δh = 200, Δz = 2)
+set_value!(Δh = 250, Δz = 2)
 
 function run_experiment!(experiment; 
-                         Q  = 0.0, # Cooling heat flux in W/m²
-                         τw = 0.0, # Wind stress in N/m²
-                         θ  = 0.0, # Wind stress angle in degrees (0 correspond to zonal wind stress)
-                         ΔT = 2.0, # Meridional temperature difference
-                         Lf = 1.0, # Size of temperature front (large numbers correspond to steeper fronts)
+                         Q  = 0.0,  # Cooling heat flux in W/m²
+                         τw = 0.0,  # Wind stress in N/m²
+                         θ  = 30.0, # Wind stress angle in degrees (0 correspond to zonal wind stress)
+                         ΔT = 2.0,  # Meridional temperature difference
+                         Lf = 1.0,  # Size of temperature front (large numbers correspond to steeper fronts)
                          N² = 5e-6,
+                         σ² = 0.15,
                          restoring = true)
     
-    set_value!(; Q, τw, θ, ΔT, Lf, N²)
+    set_value!(; Q, τw, θ, ΔT, Lf, N², σ²)
 
     @info "Simulation parameters: " parameters
 
@@ -35,7 +37,7 @@ function run_experiment!(experiment;
     output_fields = merge(model.velocities, model.tracers)
 
     simulation.output_writers[:snapshots] = JLD2OutputWriter(model, output_fields;
-                                                             schedule = TimeInterval(3hours),
+                                                             schedule = ConsecutiveIterations(TimeInterval(3hours)),
                                                              overwrite_existing = true,
                                                              array_type = Array{Float32},
                                                              filename = "hydrostatic_snapshots_$(experiment)")
@@ -49,15 +51,19 @@ function run_experiment!(experiment;
     return simulation
 end
 
-run_experiment!("constant_cooling_05_wind_0075_30"; Q = 5.0,  τw = 0.075, θ = 30.0)
-run_experiment!("constant_cooling_10_wind_0075_30"; Q = 10.0, τw = 0.075, θ = 30.0)
-run_experiment!("constant_cooling_25_wind_0075_30"; Q = 25.0, τw = 0.075, θ = 30.0)
-run_experiment!("constant_cooling_50_wind_0075_30"; Q = 50.0, τw = 0.075, θ = 30.0)
-run_experiment!("no_cooling_wind_0075_30";          Q = 0.0,  τw = 0.075, θ = 30.0)
-run_experiment!("no_cooling_no_wind";               Q = 0.0,  τw = 0.0,   θ = 30.0)
-
-# Experiments without restoring, only wind and cooling
-run_experiment!("constant_cooling_10_wind_0075_30_no_restoring"; Q = 10.0, τw = 0.075, θ = 30.0, restoring = false)
+# run_experiment!("no_cooling_wind_0075"; Q = 0.0,  τw = 0.075)
+# run_experiment!("cooling_05_wind_0075"; Q = 5.0,  τw = 0.075)
+# run_experiment!("cooling_10_wind_0075"; Q = 10.0, τw = 0.075)
+# run_experiment!("cooling_35_wind_0075"; Q = 35.0, τw = 0.075)
+# run_experiment!("no_cooling_no_wind";   Q = 0.0,  τw = 0.0)
+# 
+# 
+# run_experiment!("cooling_10_wind_0075_σ_030"; Q = 10.0, τw = 0.075, σ² = 0.3)
+# 
+# # Experiments without restoring
+# run_experiment!("no_cooling_no_wind_no_restoring";          Q = 0.0,  τw = 0.0,   restoring = false)
+# run_experiment!("cooling_10_wind_0075_no_restoring";        Q = 10.0, τw = 0.075, restoring = false)
+# run_experiment!("cooling_10_wind_0075_σ_030_no_restoring";  Q = 10.0, τw = 0.075, σ² = 0.3, restoring = false)
 
 
 
