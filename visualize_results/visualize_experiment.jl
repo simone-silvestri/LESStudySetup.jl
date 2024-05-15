@@ -12,11 +12,11 @@ using LESStudySetup.Diagnostics: load_snapshots, MixedLayerDepth
 filename = "hydrostatic_snapshots_cooling_10_wind_0075.jld2"
 
 # Load in the snapshots
-fields = load_snapshots(filename)
-u = fields[:u]
-v = fields[:v]
-w = fields[:w]
-T = fields[:T]
+snapshots = load_snapshots(filename)
+u = snapshots[:u]
+v = snapshots[:v]
+w = snapshots[:w]
+T = snapshots[:T]
 
 # Retrieve the grid from the snapshots
 grid = T.grid 
@@ -39,7 +39,7 @@ end
 
 # Calulate the mixed layer depth at the last timestep
 T_end = T[number_of_snapshots];
-mixed_layer = MixedLayerDepth(grid, (; T = T_end))
+mixed_layer = MixedLayerDepth(grid, (; T = T_end); ΔT = 0.00002)
 compute!(mixed_layer)
 
 # Check the meridionally average temperature profile
