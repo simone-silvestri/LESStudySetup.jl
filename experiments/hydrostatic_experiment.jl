@@ -40,6 +40,7 @@ function run_experiment!(experiment;
                                                              schedule = ConsecutiveIterations(TimeInterval(3hours)),
                                                              overwrite_existing = true,
                                                              array_type = Array{Float32},
+                                                             with_halos = true,
                                                              filename = "hydrostatic_snapshots_$(experiment)")
 
     #####

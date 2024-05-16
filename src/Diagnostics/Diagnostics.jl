@@ -47,12 +47,12 @@ function write_pointwise_diagnostics(file_prefix)
     # WB = propagate_function(wb,  snapshots; filename = output_filename)
     # UW = propagate_function(uw,  snapshots; filename = output_filename)
     # VW = propagate_function(vw,  snapshots; filename = output_filename)
-    Z  = propagate_function(ζ,   snapshots; filename = output_filename)
+    # Z  = propagate_function(ζ,   snapshots; filename = output_filename)
     D  = propagate_function(δ,   snapshots; filename = output_filename)
     Q  = propagate_function(PV,  snapshots; filename = output_filename)
     MX = propagate_function(MLD, snapshots; filename = output_filename)
 
-    return (; Z, D, Q, MX)
+    return (; D, Q, MX)
 end
 
 function load_snapshots(filename; architecture = CPU(),

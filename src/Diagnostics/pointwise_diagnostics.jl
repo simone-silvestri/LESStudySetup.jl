@@ -112,6 +112,7 @@ function δ(snapshots, i)
     u = snapshots[:u][i]
     v = snapshots[:v][i]
 
+    grid = u.grid
     return KernelFunctionOperation{Center, Center, Center}(div_xyᶜᶜᶜ, grid, u, v)
 end
 
