@@ -79,7 +79,7 @@ set_value!(var::Symbol, val) = parameters[var] = val
 
 function set_value!(params::ProblemConstants) 
     for name in propertynames(params)
-        set_value!(name, getproperty(name, params))
+        set_value!(name, getproperty(params, name))
     end
 end
 
