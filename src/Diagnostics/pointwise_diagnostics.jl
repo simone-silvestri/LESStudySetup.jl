@@ -56,7 +56,7 @@ function ub(snapshots, i)
     u = snapshots[:u][i]
     T = snapshots[:T][i]
     
-    return α * g * T * w
+    return α * g * T * u
 end
 
 """ meridional buoyancy flux """
