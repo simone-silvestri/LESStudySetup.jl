@@ -42,11 +42,11 @@ function write_pointwise_diagnostics(file_prefix)
 
     output_filename = "diagnostic" * file_prefix * ".jld2"
 
-    UB = propagate_function(ub,  snapshots; filename = output_filename)
-    VB = propagate_function(vb,  snapshots; filename = output_filename)
-    WB = propagate_function(wb,  snapshots; filename = output_filename)
-    UW = propagate_function(uw,  snapshots; filename = output_filename)
-    VW = propagate_function(vw,  snapshots; filename = output_filename)
+    # UB = propagate_function(ub,  snapshots; filename = output_filename)
+    # VB = propagate_function(vb,  snapshots; filename = output_filename)
+    # WB = propagate_function(wb,  snapshots; filename = output_filename)
+    # UW = propagate_function(uw,  snapshots; filename = output_filename)
+    # VW = propagate_function(vw,  snapshots; filename = output_filename)
     Z  = propagate_function(ζ,   snapshots; filename = output_filename)
     D  = propagate_function(δ,   snapshots; filename = output_filename)
     Q  = propagate_function(PV,  snapshots; filename = output_filename)
@@ -60,10 +60,10 @@ function load_snapshots(filename; architecture = CPU(),
 
     snapshots = Dict()
 
-    u = FieldTimeSeries(filename, "u"; architecture, backend = OnDisk())
-    v = FieldTimeSeries(filename, "v"; architecture, backend = OnDisk())
-    w = FieldTimeSeries(filename, "w"; architecture, backend = OnDisk())
-    T = FieldTimeSeries(filename, "T"; architecture, backend = OnDisk())
+    u = FieldTimeSeries(filename, "u"; architecture, backend = OnDisk(), indices = (:, :, :))
+    v = FieldTimeSeries(filename, "v"; architecture, backend = OnDisk(), indices = (:, :, :))
+    w = FieldTimeSeries(filename, "w"; architecture, backend = OnDisk(), indices = (:, :, :))
+    T = FieldTimeSeries(filename, "T"; architecture, backend = OnDisk(), indices = (:, :, :))
 
     snapshots[:u] = u
     snapshots[:v] = v
