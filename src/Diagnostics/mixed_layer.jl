@@ -56,7 +56,7 @@ end
 
 Base.summary(op::MixedLayerDepthOperand) = "MixedLayerDepthOperand"
 
-function MixedLayerDepth(grid, tracers; ΔT = 0.1, kw...)
+function MixedLayerDepth(grid, tracers; ΔT = 0.2, kw...)
     operand = MixedLayerDepthOperand(tracers.T, abs(ΔT))
     return Field{Center, Center, Nothing}(grid; operand, kw...)
 end

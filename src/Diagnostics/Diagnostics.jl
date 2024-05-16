@@ -1,5 +1,8 @@
 module Diagnostics
 
+export load_snapshots, propagate_function,
+       ζ, ub, vb, wb, uw, vw, KE, MLD, PV
+
 using Oceananigans
 using Oceananigans
 
@@ -21,7 +24,8 @@ using Oceananigans.Fields: OneField, condition_operand
 using Oceananigans.AbstractOperations: materialize_condition!
 using Oceananigans.Utils
 
-function load_snapshots(filename; architecture = CPU())
+function load_snapshots(filename; architecture = CPU()
+                                  metadata = nothing)
 
     snapshots = Dict()
 
@@ -34,16 +38,18 @@ function load_snapshots(filename; architecture = CPU())
     snapshots[:v] = v
     snapshots[:w] = w
     snapshots[:T] = T
+
+    if !isnothing(metadata)
+        params = jldopen(metadata)["parameters"]
+        set_value!(params)
+    end
     
     return snapshots
 end
 
-function VerticalVorticity(u, v)
-    ζ = Field(∂x(v) - ∂y(u))
-    compute!(ζ)
-    return ζ
-end
+times(snapshots::Dict) = snapshots[first(keys(snapshots))].times
 
 include("mixed_layer.jl")
+include("pointwise_diagnostics.jl")
 
 end

@@ -77,6 +77,12 @@ const parameters = ProblemConstants()
 set_value!(; kwargs...)      = set!(parameters; kwargs...)
 set_value!(var::Symbol, val) = parameters[var] = val
 
+function set_value!(params::ProblemConstants) 
+    for name in propertynames(params)
+        set_value!(name, getproperty(name, params))
+    end
+end
+
 Base.getindex(c::ProblemConstants, var::Symbol)     = @eval $c.$var
 Base.setindex!(c::ProblemConstants, v, var::Symbol) = @eval $c.$var = $v
 
