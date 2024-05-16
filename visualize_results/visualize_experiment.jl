@@ -9,7 +9,7 @@ using LESStudySetup.Diagnostics
 using LESStudySetup.Diagnostics: load_snapshots
 
 # Path to the snapshots
-filename = "hydrostatic_snapshots_strong_stratification_cooling_10_wind_0075.jld2"
+filename = "hydrostatic_snapshots_strong_stratification_cooling_100_wind_0075.jld2"
 metadata = "experiment_strong_stratification_cooling_100_wind_0075_metadata.jld2"
 
 # Load in the snapshots
@@ -18,6 +18,9 @@ u = snapshots[:u]
 v = snapshots[:v]
 w = snapshots[:w]
 T = snapshots[:T]
+
+# Make sure parameters are correctly loaded
+@info parameters
 
 output_filename = "diagnostic_strong_stratification_cooling_100_wind_0075.jld2"
 
