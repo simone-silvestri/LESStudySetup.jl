@@ -1,5 +1,6 @@
 module Diagnostics
 
+export write_pointwise_diagnostics
 export load_snapshots, propagate_function,
        ζ, ub, vb, wb, uw, vw, KE, MLD, PV
 
@@ -26,6 +27,33 @@ using Oceananigans.AbstractOperations: materialize_condition!
 using Oceananigans.Utils
 
 using LESStudySetup
+
+function write_pointwise_diagnostics(file_prefix)
+
+    # Path to the snapshots
+    filename = "hydrostatic_snapshots" * file_prefix * ".jld2"
+    metadata = "experiment" * file_prefix * "_metadata.jld2"
+
+    # Load in the snapshots
+    snapshots = load_snapshots(filename; metadata)
+
+    # Make sure parameters are correctly loaded
+    @info parameters
+
+    output_filename = "diagnostic" * file_prefix * ".jld2"
+
+    UB = propagate_function(ub,  snapshots; filename = output_filename)
+    VB = propagate_function(vb,  snapshots; filename = output_filename)
+    WB = propagate_function(wb,  snapshots; filename = output_filename)
+    UW = propagate_function(uw,  snapshots; filename = output_filename)
+    VW = propagate_function(vw,  snapshots; filename = output_filename)
+    Z  = propagate_function(ζ,   snapshots; filename = output_filename)
+    D  = propagate_function(δ,   snapshots; filename = output_filename)
+    Q  = propagate_function(PV,  snapshots; filename = output_filename)
+    MX = propagate_function(MLD, snapshots; filename = output_filename)
+
+    return (; UB, VB, WB, UW, VW, Z, D, Q, MX)
+end
 
 function load_snapshots(filename; architecture = CPU(),
                                   metadata = nothing)
