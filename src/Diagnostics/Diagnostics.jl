@@ -24,7 +24,7 @@ using Oceananigans.Fields: OneField, condition_operand
 using Oceananigans.AbstractOperations: materialize_condition!
 using Oceananigans.Utils
 
-function load_snapshots(filename; architecture = CPU()
+function load_snapshots(filename; architecture = CPU(),
                                   metadata = nothing)
 
     snapshots = Dict()
