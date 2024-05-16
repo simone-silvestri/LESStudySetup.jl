@@ -52,7 +52,7 @@ function write_pointwise_diagnostics(file_prefix)
     Q  = propagate_function(PV,  snapshots; filename = output_filename)
     MX = propagate_function(MLD, snapshots; filename = output_filename)
 
-    return (; UB, VB, WB, UW, VW, Z, D, Q, MX)
+    return (; Z, D, Q, MX)
 end
 
 function load_snapshots(filename; architecture = CPU(),
@@ -60,10 +60,10 @@ function load_snapshots(filename; architecture = CPU(),
 
     snapshots = Dict()
 
-    u = FieldTimeSeries(filename, "u"; architecture, backend = OnDisk(), indices = (:, :, :))
-    v = FieldTimeSeries(filename, "v"; architecture, backend = OnDisk(), indices = (:, :, :))
-    w = FieldTimeSeries(filename, "w"; architecture, backend = OnDisk(), indices = (:, :, :))
-    T = FieldTimeSeries(filename, "T"; architecture, backend = OnDisk(), indices = (:, :, :))
+    u = FieldTimeSeries(filename, "u"; architecture, backend = OnDisk())
+    v = FieldTimeSeries(filename, "v"; architecture, backend = OnDisk())
+    w = FieldTimeSeries(filename, "w"; architecture, backend = OnDisk())
+    T = FieldTimeSeries(filename, "T"; architecture, backend = OnDisk())
 
     snapshots[:u] = u
     snapshots[:v] = v
