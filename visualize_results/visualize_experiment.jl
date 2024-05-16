@@ -9,7 +9,7 @@ using LESStudySetup.Diagnostics
 using LESStudySetup.Diagnostics: load_snapshots
 
 # Path to the snapshots
-filename = "hydrostatic_snapshots_cooling_10_wind_0075.jld2"
+filename = "hydrostatic_strong_stratification_snapshots_cooling_10_wind_0075.jld2"
 metadata = "experiment_strong_stratification_cooling_100_wind_0075_metadata.jld2"
 
 # Load in the snapshots
