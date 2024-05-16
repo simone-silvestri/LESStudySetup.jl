@@ -42,17 +42,17 @@ function write_pointwise_diagnostics(file_prefix)
 
     output_filename = "diagnostic" * file_prefix * ".jld2"
 
-    # UB = propagate_function(ub,  snapshots; filename = output_filename)
-    # VB = propagate_function(vb,  snapshots; filename = output_filename)
-    # WB = propagate_function(wb,  snapshots; filename = output_filename)
-    # UW = propagate_function(uw,  snapshots; filename = output_filename)
-    # VW = propagate_function(vw,  snapshots; filename = output_filename)
-    # Z  = propagate_function(ζ,   snapshots; filename = output_filename)
+    UB = propagate_function(ub,  snapshots; filename = output_filename)
+    VB = propagate_function(vb,  snapshots; filename = output_filename)
+    WB = propagate_function(wb,  snapshots; filename = output_filename)
+    UW = propagate_function(uw,  snapshots; filename = output_filename)
+    VW = propagate_function(vw,  snapshots; filename = output_filename)
+    Z  = propagate_function(ζ,   snapshots; filename = output_filename)
     D  = propagate_function(δ,   snapshots; filename = output_filename)
     Q  = propagate_function(PV,  snapshots; filename = output_filename)
     MX = propagate_function(MLD, snapshots; filename = output_filename)
 
-    return (; D, Q, MX)
+    return (; UB, VB, WB, UW, VW, Z, D, Q, MX)
 end
 
 function load_snapshots(filename; architecture = CPU(),
