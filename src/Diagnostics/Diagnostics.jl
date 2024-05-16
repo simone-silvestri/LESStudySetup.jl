@@ -43,11 +43,8 @@ function load_snapshots(filename; architecture = CPU(),
 
     if !isnothing(metadata)
         params = jldopen(metadata)["parameters"]
-        @show params
         set_value!(params)
     end
-
-    @info parameters
     
     return snapshots
 end

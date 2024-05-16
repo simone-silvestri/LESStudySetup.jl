@@ -14,7 +14,7 @@ filename = "hydrostatic_snapshots_strong_stratification_cooling_100_wind_0075.jl
 metadata = "experiment_strong_stratification_cooling_100_wind_0075_metadata.jld2"
 
 # Load in the snapshots
-snapshots = load_snapshots(filename)
+snapshots = load_snapshots(filename; metadata)
 u = snapshots[:u]
 v = snapshots[:v]
 w = snapshots[:w]

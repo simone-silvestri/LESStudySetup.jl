@@ -14,7 +14,8 @@ function propagate_function(func, snapshots; filename = "temp.jld2")
 
     saved_times = times(snapshots)
     func_name   = String(Symbol(func))
-
+    Nt          = length(saved_times)
+    
     field_time_series = FieldTimeSeries{loc...}(grid, Nt; 
                                                 times = saved_times,
                                                 backend = OnDisk(),
