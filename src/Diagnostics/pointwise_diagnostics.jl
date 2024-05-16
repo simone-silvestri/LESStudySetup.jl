@@ -9,8 +9,8 @@ function propagate_function(func, snapshots; filename = "temp.jld2")
     field = Field(first_operation)
     compute!(field)
 
-    loc  = location(first_field)
-    grid = first_field.grid
+    loc  = location(field)
+    grid = field.grid
 
     saved_times = times(snapshots)
     func_name   = String(Symbol(func))
