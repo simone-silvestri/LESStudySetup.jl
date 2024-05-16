@@ -21,9 +21,12 @@ function propagate_function(func, snapshots; filename = "temp.jld2")
                                                 path = filename,
                                                 name = func_name)
 
+    @info "calculating $func_name over the timeseries..."
+
     for i in 1:Nt
         set!(field, func(snapshots, i))
         set!(field_time_series, field, i)
+        @info "calculated $func_name at iteration $i of $Nt"
     end
 
     return field_time_series
