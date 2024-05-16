@@ -6,7 +6,9 @@ using Oceananigans.Operators: div_xyᶜᶜᶜ
 """
 function propagate_function(func, snapshots; filename = "temp.jld2")
     first_operation = func(snapshots, 1)
-    field = Field(first_operation; indices = indices(first_operation.operand))
+    grid = first_operation.grid
+    Nx, Ny, Nz = size(grid)
+    field = Field(first_operation; indices = (2:Nx-1, 2:Ny-1, 2:Nz-1))
     compute!(field)
 
     loc  = location(field)
