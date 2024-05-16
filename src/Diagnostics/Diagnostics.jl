@@ -17,6 +17,7 @@ using Oceananigans.Operators: Δzᶜᶜᶠ, ζ₃ᶠᶠᶜ
 
 using KernelAbstractions: @index, @kernel
 using KernelAbstractions.Extras.LoopInfo: @unroll
+using JLD2
 
 import Oceananigans.Fields: compute!
 
