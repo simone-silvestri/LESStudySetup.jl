@@ -29,7 +29,7 @@ A mutable struct representing the constants used in the LES study setup.
     ΔT :: Float64 = 0.5
     ρ₀ :: Float64 = 1020
     T₀ :: Float64 = 5
-    cp :: Float64 = 3900
+    cp :: Float64 = 3995
     N² :: Float64 = 2e-6
      H :: Float64 = 50
     ΔH :: Float64 = 5
