@@ -28,14 +28,14 @@ using Oceananigans.Utils
 
 using LESStudySetup
 
-function write_pointwise_diagnostics(file_prefix)
+function write_pointwise_diagnostics(file_prefix; architecture = CPU())
 
     # Path to the snapshots
     filename = "hydrostatic_snapshots" * file_prefix * ".jld2"
     metadata = "experiment" * file_prefix * "_metadata.jld2"
 
     # Load in the snapshots
-    snapshots = load_snapshots(filename; metadata)
+    snapshots = load_snapshots(filename; metadata, architecture)
 
     # Make sure parameters are correctly loaded
     @info parameters
@@ -55,8 +55,9 @@ function write_pointwise_diagnostics(file_prefix)
     return (; UB, VB, WB, UW, VW, Z, D, Q, MX)
 end
 
-function load_snapshots(filename; architecture = CPU(),
-                                  metadata = nothing)
+function load_snapshots(filename; 
+                        architecture = CPU(),
+                        metadata = nothing)
 
     snapshots = Dict()
 
