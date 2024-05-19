@@ -34,6 +34,8 @@ A mutable struct representing the constants used in the LES study setup.
      H :: Float64 = 50
     ΔH :: Float64 = 5
     Δh :: Float64 = 1kilometers
+    m₀ :: Float64 = 50
+    Δm :: Float64 = 30
     Δz :: Float64 = 4meters
     Lx :: Float64 = 100kilometers
     Ly :: Float64 = 100kilometers
@@ -43,7 +45,7 @@ A mutable struct representing the constants used in the LES study setup.
      θ :: Float64 = 30
      Q :: Float64 = 0
      α :: Float64 = 2e-4
-    Lf :: Float64 = 2
+    Lf :: Float64 = 1
     σ² :: Float64 = 0.15
      g :: Float64 = Oceananigans.BuoyancyModels.g_Earth
 end
@@ -53,6 +55,9 @@ Base.show(io::IO, c::ProblemConstants) =
               "├── reference density:      ρ₀ = ", c.ρ₀, "\n",
               "├── surface temperature:    T₀ = ", c.T₀, "\n",
               "├── heat capacity:          cp = ", c.cp, "\n",
+              "├── initial stratification  N² = ", c.N², "\n",
+              "├── initial mixed layer     m₀ = ", c.m₀, "\n",
+              "├── mld difference          Δm = ", c.Δm, "\n",
               "├── initial stratification  N² = ", c.N², "\n",
               "├── thermocline depth        H = ", c.H,  "\n",
               "├── thermocline extent      ΔH = ", c.ΔH, "\n",

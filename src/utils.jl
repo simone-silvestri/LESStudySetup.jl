@@ -21,12 +21,12 @@ end
 end
 
 function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid;
-                        restoring = true)
+                        restoring = false)
     
     momentum_advection = WENO(; order = 7)
     tracer_advection   = WENO(; order = 7)
-    closure = CATKEVerticalDiffusivity()
-    tracers = (:T, :e)
+    closure = XinKaiVerticalDiffusivity()
+    tracers = :T
 
     Tm = Field{Center, Nothing, Nothing}(grid)
     Um = Field{Face,   Center,  Nothing}(grid)
@@ -48,12 +48,12 @@ function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid;
 end
 
 # Background fields for the NonhydrostaticModel
-@inline Tb(x, y, z, t, p) = T̅(x, y, z, p)
-@inline Ub(x, y, z, t, p) = U̅(x, y, z, p)
-@inline Vb(x, y, z, t, p) = V̅(x, y, z, p)
+@inline Tb(x, y, z, t) = Tᵢ(x, y, z)
+@inline Ub(x, y, z, t) = uᵢ(x, y, z)
+@inline Vb(x, y, z, t) = vᵢ(x, y, z)
 
 function model_settings(::Type{NonhydrostaticModel}, grid;
-                        restoring = true) 
+                        restoring = false) 
     advection = WENO(; order = 7)
     tracers = :T
 
@@ -71,14 +71,14 @@ function model_settings(::Type{NonhydrostaticModel}, grid;
 end
 
 # Initial conditions for both models
-@inline Ti(x, y, z) = Tᵢ(x, y, z, gpuify(parameters))
-@inline Ui(x, y, z) =  U̅(x, y, z, gpuify(parameters))
-@inline Vi(x, y, z) =  V̅(x, y, z, gpuify(parameters))
+@inline Ti(x, y, z) = Tᵢ(x, y, z)
+@inline Ui(x, y, z) = uᵢ(x, y, z)
+@inline Vi(x, y, z) = vᵢ(x, y, z)
 
 set_model!(model::HydrostaticFreeSurfaceModel) = 
-    set!(model, u = Ui, v = Vi, T = Ti, e = 1e-6)
+    set!(model, u = uᵢ, v = vᵢ, T = Tᵢ)
 
-set_model!(model::NonhydrostaticModel) = set!(model, T = Ti)
+set_model!(model::NonhydrostaticModel) = set!(model, T = Tᵢ)
 
 simulation_callbacks!(::Simulation{<:NonhydrostaticModel}, args...) = nothing
 
