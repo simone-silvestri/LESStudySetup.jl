@@ -13,11 +13,11 @@ function run_experiment!(experiment;
                          Q  = 0.0,  # Cooling heat flux in W/m²
                          τw = 0.0,  # Wind stress in N/m²
                          θ  = 30.0, # Wind stress angle in degrees (0 correspond to zonal wind stress)
-                         ΔT = 2.0,  # Meridional temperature difference
-                         Lf = 1.0,  # Size of temperature front (large numbers correspond to steeper fronts)
+                         ΔT = 0.5,  # Meridional temperature difference
+                         Lf = 0.9,  # Size of temperature front (large numbers correspond to steeper fronts)
                          N² = 5e-6,
                          σ² = 0.15,
-                         restoring = true)
+                         restoring = false)
     
     set_value!(; Q, τw, θ, ΔT, Lf, N², σ²)
 

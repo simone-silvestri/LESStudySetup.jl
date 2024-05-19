@@ -1,9 +1,5 @@
 
-@inline transformX(x, p) = ifelse(x <= p.Lx / 2, 
-                                  2x / p.Lx * π * (1 + p.Lf) - π/2 * p.Lf,
-                                  2(p.Lx - x) / p.Lx * π * (1 + p.Lf) - π/2 * p.Lf)
-
-@inline transformR(r, p) = 2(p.R - r) / p.R * π * (1 + p.Lf) - π/2 * p.Lf
+@inline transformR(r, p) = 2(p.R - r) / p.R * π * p.Lf - π/2 * (p.Lf - 1)
 
 @inline function uᵢ(x, y, z)
     Lf = parameters.Lf
@@ -147,24 +143,28 @@ end
 @inline function warm_eddy(ξ, z)
 
     Lz = parameters.Lz
+    T₀ = parameters.T₀
+    ΔT = parameters.ΔT
 
     h = h̅⁺(ξ)
     if z > - h
         return T̅⁺(ξ)
     else
-        return T̅⁺(ξ) / (Lz - h)^2 * (Lz + z)^2
+        return (T̅⁺(ξ) - T₀ + 1.2ΔT) / (Lz - h)^2 * (Lz + z)^2 + T₀ - 1.2ΔT
     end
 end
 
 @inline function cold_eddy(ξ, z)
 
     Lz = parameters.Lz
+    T₀ = parameters.T₀
+    ΔT = parameters.ΔT
 
     h = h̅⁻(ξ)
     if z > - h
         return T̅⁻(ξ)
     else
-        return T̅⁻(ξ) / (Lz - h)^2 * (Lz + z)^2
+        return (T̅⁻(ξ) - T₀ + 1.2ΔT) / (Lz - h)^2 * (Lz + z)^2 + T₀ - 1.2ΔT
     end
 end
 
@@ -178,7 +178,7 @@ end
 
     ∂b∂ξ = - g * α * ΔT * (sin(ξ)^2 - cos(ξ)^2 + 1) / π
     ∂b∂ξ = Int(0 < ξ < 3.1415926535897) * ∂b∂ξ
-    ∂ξ∂r = - 2π / R * (1 + Lf)
+    ∂ξ∂r = - 2π / R * Lf
 
     h = h̅⁺(ξ)
     if z > - h
@@ -198,7 +198,7 @@ end
 
     ∂b∂ξ = g * α * ΔT * (sin(ξ)^2 - cos(ξ)^2 + 1) / π
     ∂b∂ξ = Int(0 < ξ < 3.1415926535897) * ∂b∂ξ
-    ∂ξ∂r = - 2π / R * (1 + Lf)
+    ∂ξ∂r = - 2π / R * Lf
 
     h = h̅⁻(ξ)
     if z > - h

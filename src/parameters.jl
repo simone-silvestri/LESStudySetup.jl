@@ -26,7 +26,7 @@ A mutable struct representing the constants used in the LES study setup.
 - `Jᵀ::Float64`: Heat flux at the top.
 """
 @kwdef mutable struct ProblemConstants
-    ΔT :: Float64 = 1.0
+    ΔT :: Float64 = 0.5
     ρ₀ :: Float64 = 1020
     T₀ :: Float64 = 5
     cp :: Float64 = 3900
