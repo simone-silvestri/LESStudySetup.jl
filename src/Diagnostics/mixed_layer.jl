@@ -49,15 +49,16 @@ const f = Face()
     @inbounds h[i, j, 1] = - z_ij
 end
 
-struct MixedLayerDepthOperand{B, FT}
+struct MixedLayerDepthOperand{B, FT, G}
     temperature_operation :: B
     mixed_layer_temperature_differential :: FT
+    grid :: G
 end
 
 Base.summary(op::MixedLayerDepthOperand) = "MixedLayerDepthOperand"
 
 function MixedLayerDepth(grid, tracers; ΔT = 0.2, kw...)
-    operand = MixedLayerDepthOperand(tracers.T, abs(ΔT))
+    operand = MixedLayerDepthOperand(tracers.T, abs(ΔT), grid)
     return Field{Center, Center, Nothing}(grid; operand, kw...)
 end
 
