@@ -93,9 +93,9 @@ end
 
 """ mixed layer depth """
 function MLD(snapshots, i; threshold = 0.1)
-    T = snapshots[:T][i]
-    h = MixedLayerDepthOperand(T, abs(threshold))
-
+    T    = snapshots[:T][i]
+    grid = T.grid
+    h    = MixedLayerDepthOperand(T, abs(threshold), grid)
     return h
 end
 
