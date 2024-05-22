@@ -13,8 +13,7 @@ using Printf
 include("xin_kai_vertical_diffusivity.jl")
 include("parameters.jl")
 include("utils.jl")
-# include("initial_conditions.jl")
-include("four_vortex_initial_conditions.jl")
+include("zero_symmetry_initial_conditions.jl")
 include("idealized_setup.jl")
 include("Diagnostics/Diagnostics.jl")
 

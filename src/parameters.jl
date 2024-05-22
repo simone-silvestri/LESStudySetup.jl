@@ -45,8 +45,9 @@ A mutable struct representing the constants used in the LES study setup.
      θ :: Float64 = 30
      Q :: Float64 = 0
      α :: Float64 = 2e-4
+     Φ :: Float64 = 0.075
     Lf :: Float64 = 1
-    σ² :: Float64 = 0.15
+    σ² :: Float64 = 0.25
      g :: Float64 = Oceananigans.BuoyancyModels.g_Earth
 end
 
@@ -70,7 +71,8 @@ Base.show(io::IO, c::ProblemConstants) =
               "├── wind stress:            τw = ", c.τw, "\n",
               "├── wind angle               θ = ", c.θ,  "\n",
               "├── heat flux:               Q = ", c.Q,  "\n", 
-              "├── thermal expansion:       α = ", c.α,  "\n",
+              "├── thermal expansion:       α = ", c.α,  "\n", 
+              "├── barotropic vortex:       Φ = ", c.Φ,  "\n",
               "├── gravity:                 g = ", c.g,  "\n",
               "├── Initial vortex spread:  σ² = ", c.σ², "\n",
               "└── Frontal width:          Lf = ", c.Lf, "\n")
