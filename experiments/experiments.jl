@@ -19,6 +19,6 @@ using Statistics: mean
 #     _ = write_pointwise_diagnostics(prefix; architecture = GPU())
 # end
 
-run_experiment!("free_surface_short_test_100_wind_00"; Q = 100.0, τw = 0.0, 
+run_experiment!("free_surface_short_test_100_wind_00"; Q = 50.0, τw = 0.1, 
                                                        stop_time = 5hours,
                                                        output_frequency = 5minutes)

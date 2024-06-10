@@ -16,6 +16,7 @@ function run_experiment!(experiment;
                          ΔT = 0.5,  # Meridional temperature difference
                          Lf = 0.9,  # Size of temperature front (large numbers correspond to steeper fronts)
                          σ² = 0.15, # Initial spread of the barotropic eddy
+                         N² = 2e-6, # Initial stratification below the thermocline
                          output_frequency = 3hours,
                          stop_time = 20days,
                          restoring = false)
