@@ -44,12 +44,12 @@ function run_experiment!(experiment;
                                                              filename = "hydrostatic_snapshots_$(experiment)")
 
 
-    simulation.output_writers[:snapshots] = JLD2OutputWriter(model, output_fields;
-                                                             schedule = ConsecutiveIterations(TimeInterval(output_frequency)),
-                                                             overwrite_existing = true,
-                                                             array_type = Array{Float32},
-                                                             with_halos = true,
-                                                             filename = "hydrostatic_snapshots_$(experiment)")
+    simulation.output_writers[:free_surface] = JLD2OutputWriter(model, (η = model.free_surface.η);
+                                                                schedule = ConsecutiveIterations(TimeInterval(output_frequency)),
+                                                                overwrite_existing = true,
+                                                                array_type = Array{Float32},
+                                                                with_halos = true,
+                                                                filename = "hydrostatic_snapshots_$(experiment)")
 
     #####
     ##### Let's run!!!!
