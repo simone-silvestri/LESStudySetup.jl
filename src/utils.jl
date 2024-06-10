@@ -113,13 +113,5 @@ function progress(sim)
     msg1 = @sprintf("(u, v, w): %.2e %.2e %.2e ", maximum(ui), maximum(vi), maximum(wi))
     msg2 = @sprintf("T: %.2e %.2e ", minimum(Ti), maximum(Ti))
 
-    if sim.model isa HydrostaticFreeSurfaceModel
-        e = sim.model.tracers.e
-        ei = interior(e)
-        msg3 = @sprintf("e: %.2e %.2e ", minimum(ei), maximum(ei))
-    else
-        msg3 = ""
-    end
-
-    @info msg0 * msg1 * msg2 * msg3 
+    @info msg0 * msg1 * msg2 
 end
