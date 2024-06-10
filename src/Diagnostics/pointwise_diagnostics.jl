@@ -1,4 +1,7 @@
 using Oceananigans.Operators: div_xyᶜᶜᶜ
+using Oceananigans.Operators
+using Oceananigans.Utils: launch!
+using KernelAbstractions: @kernel, @index
 
 """ propagate a diagnostic over the timeseries found in snapshots 
     and save the results in a FieldTimeSeries object that is backed up in 
@@ -136,4 +139,24 @@ function PV(snapshots, i)
     bz = α * g * ∂z(T)
 
     return ωx * bx + ωy * by + ωz * bz
+end
+
+""" streamfunction computation kernel """
+@kernel function _streamfunction!(ψ, u, grid)
+    i, k = @index(Global, NTuple)
+
+    @inbounds ψ[i, 1, k] = 0
+    for j in 2:grid.Ny
+        @inbounds ψ[i, j, k] = ψ[i, j-1, k] + u[i, j-1, k] * Δyᶠᶜᶜ(i, j, k, grid)
+    end
+end
+
+""" barotropic streamfunction """
+function Ψ(snapshots, i)
+    u = snapshots[:u][i]
+    grid = u.grid
+    ψ = Field{Face, Face, Center}(grid)
+    arch = architecture(grid)
+    launch!(arch, grid, :xz, _streamfunction!, ψ, u, grid)
+    return ψ
 end
