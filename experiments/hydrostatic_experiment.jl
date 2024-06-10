@@ -50,7 +50,7 @@ function run_experiment!(experiment;
                                                                 overwrite_existing = true,
                                                                 array_type = Array{Float32},
                                                                 with_halos = true,
-                                                                filename = "hydrostatic_snapshots_$(experiment)")
+                                                                filename = "hydrostatic_free_surface_$(experiment)")
 
     #####
     ##### Let's run!!!!
