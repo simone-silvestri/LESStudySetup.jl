@@ -180,7 +180,41 @@ end
     end
 end
 
+# Free surface as a function of the eddy radius 
+@inline  η(r, p) = exp(-(r / p.R)^2 / p.σ²) * p.Φ
 @inline ∂η(r, p) = - 2r / p.R^2 / p.σ² * exp(-(r / p.R)^2 / p.σ²) * p.Φ
+
+@inline function ηᵢ(x, y, z) 
+    Lf = parameters.Lf
+    σ² = parameters.σ²
+    Φ  = parameters.Φ
+    R  = 25e3
+
+    if x < 50e3 && y < 50e3 # Region 1: warm eddy!
+        x′  = x - R
+        y′  = y - R
+        sng = 1
+
+    elseif x < 50e3 && y >= 50e3 # Region 2: cold eddy!
+        x′  = x - R
+        y′  = y - 3R
+        sng = - 1
+
+    elseif x >= 50e3 && y < 50e3 # Region 3: cold eddy!
+        x′  = x - 3R
+        y′  = y - R
+        sng = - 1
+
+    else # Region 4: warm eddy!
+        x′  = x - 3R
+        y′  = y - 3R
+        sng = 1
+
+    end
+
+    r  = sqrt(x′^2 + y′^2)
+    return sng * η(r, (; R, Lf, σ², Φ))
+end
 
 @inline function warm_eddy_velocity(ξ, z, r, R, Lf)
 

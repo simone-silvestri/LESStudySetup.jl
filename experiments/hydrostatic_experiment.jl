@@ -15,7 +15,9 @@ function run_experiment!(experiment;
                          θ  = 30.0, # Wind stress angle in degrees (0 correspond to zonal wind stress)
                          ΔT = 0.5,  # Meridional temperature difference
                          Lf = 0.9,  # Size of temperature front (large numbers correspond to steeper fronts)
-                         σ² = 0.15,
+                         σ² = 0.15, # Initial spread of the barotropic eddy
+                         output_frequency = 3hours,
+                         stop_time = 20days,
                          restoring = false)
     
     set_value!(; Q, τw, θ, ΔT, Lf, N², σ²)
@@ -23,7 +25,6 @@ function run_experiment!(experiment;
     @info "Simulation parameters: " parameters
 
     # Let's start with an hydrostatic setup running for 20 days
-    stop_time  = 20days
     simulation = idealized_setup(architecture; stop_time, hydrostatic_approximation = true, restoring)
 
     jldsave("experiment_$(experiment)_metadata.jld2", parameters = parameters)
@@ -36,7 +37,15 @@ function run_experiment!(experiment;
     output_fields = merge(model.velocities, model.tracers)
 
     simulation.output_writers[:snapshots] = JLD2OutputWriter(model, output_fields;
-                                                             schedule = ConsecutiveIterations(TimeInterval(3hours)),
+                                                             schedule = ConsecutiveIterations(TimeInterval(output_frequency)),
+                                                             overwrite_existing = true,
+                                                             array_type = Array{Float32},
+                                                             with_halos = true,
+                                                             filename = "hydrostatic_snapshots_$(experiment)")
+
+
+    simulation.output_writers[:snapshots] = JLD2OutputWriter(model, output_fields;
+                                                             schedule = ConsecutiveIterations(TimeInterval(output_frequency)),
                                                              overwrite_existing = true,
                                                              array_type = Array{Float32},
                                                              with_halos = true,

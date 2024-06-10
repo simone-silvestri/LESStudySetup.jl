@@ -47,7 +47,7 @@ A mutable struct representing the constants used in the LES study setup.
      α :: Float64 = 2e-4
      Φ :: Float64 = 0.075
     Lf :: Float64 = 1
-    σ² :: Float64 = 0.25
+    σ² :: Float64 = 0.15
      g :: Float64 = Oceananigans.BuoyancyModels.g_Earth
 end
 

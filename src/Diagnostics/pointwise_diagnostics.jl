@@ -147,7 +147,7 @@ end
 
     @inbounds ψ[i, 1, k] = 0
     for j in 2:grid.Ny
-        @inbounds ψ[i, j, k] = ψ[i, j-1, k] + u[i, j-1, k] * Δyᶠᶜᶜ(i, j, k, grid)
+        @inbounds ψ[i, j, k] = ψ[i, j-1, k] - u[i, j-1, k] * Δyᶠᶜᶜ(i, j, k, grid)
     end
 end
 
