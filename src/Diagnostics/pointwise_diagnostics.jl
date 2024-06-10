@@ -146,8 +146,18 @@ end
     i, k = @index(Global, NTuple)
 
     @inbounds ψ[i, 1, k] = 0
-    for j in 2:grid.Ny
+    for j in 2:grid.Ny+1
         @inbounds ψ[i, j, k] = ψ[i, j-1, k] - u[i, j-1, k] * Δyᶠᶜᶜ(i, j, k, grid)
+    end
+end
+
+""" streamfunction computation kernel """
+@kernel function _zstreamfunction!(ψ, v, grid)
+    i, j = @index(Global, NTuple)
+
+    @inbounds ψ[i, j, 1] = 0
+    for k in 2:grid.Nz+1
+        @inbounds ψ[i, j, k] = ψ[i, j-1, k] - v[i, j-1, k] * Δzᶜᶠᶜ(i, j, k, grid)
     end
 end
 
@@ -158,5 +168,15 @@ function Ψ(snapshots, i)
     ψ = Field{Face, Face, Center}(grid)
     arch = architecture(grid)
     launch!(arch, grid, :xz, _streamfunction!, ψ, u, grid)
+    return ψ
+end
+
+""" vertical streamfunction """
+function Ψz(snapshots, i)
+    v = snapshots[:v][i]
+    grid = v.grid
+    ψ = Field{Center, Face, Face}(grid)
+    arch = architecture(grid)
+    launch!(arch, grid, :xy, _zstreamfunction!, ψ, v, grid)
     return ψ
 end
