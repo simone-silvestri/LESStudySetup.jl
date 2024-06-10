@@ -17,11 +17,13 @@ end
     return eddy_tangential_velocity(x, y, z, R, Lf, sin)
 end
 
+@inline minus_cos(θ) = - cos(θ)
+
 @inline function vᵢ(x, y, z)
     Lf = parameters.Lf
     R  = 25e3
 
-    return eddy_tangential_velocity(x, y, z, R, Lf, cos)
+    return eddy_tangential_velocity(x, y, z, R, Lf, minus_cos)
 end
 
 @inline function eddy_tangential_velocity(x, y, z, R, Lf, trig)
