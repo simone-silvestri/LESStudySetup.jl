@@ -28,7 +28,8 @@ end
 
 @inline function eddy_tangential_velocity(x, y, z, R, Lf, trig)
     # divide into 4 regions
-    if x < 50e3 && y < 50e3 # Region 1: warm eddy!
+
+    # if x < 50e3 && y < 50e3 # Region 1: warm eddy!
         x′ = x - R
         y′ = y - R
         
@@ -36,9 +37,9 @@ end
         ξ  = transformR(r, (; R, Lf))
         uθ = warm_eddy_velocity(ξ, z, r, R, Lf)
         θ  = atan(y′, x′)
-        return trig(θ) * uθ
+        u1 = trig(θ) * uθ
     
-    elseif x < 50e3 && y >= 50e3 # Region 2: cold eddy!
+    # elseif x < 50e3 && y >= 50e3 # Region 2: cold eddy!
         x′ = x - R
         y′ = y - 3R
 
@@ -46,9 +47,9 @@ end
         ξ  = transformR(r, (; R, Lf))
         uθ = cold_eddy_velocity(ξ, z, r, R, Lf)
         θ  = atan(y′, x′)
-        return trig(θ) * uθ
+        u2 = trig(θ) * uθ
 
-    elseif x >= 50e3 && y < 50e3 # Region 3: cold eddy!
+    # elseif x >= 50e3 && y < 50e3 # Region 3: cold eddy!
         x′ = x - 3R
         y′ = y - R
 
@@ -56,9 +57,9 @@ end
         ξ  = transformR(r, (; R, Lf))
         uθ = cold_eddy_velocity(ξ, z, r, R, Lf)
         θ  = atan(y′, x′)
-        return trig(θ) * uθ
+        u3 = trig(θ) * uθ
 
-    else # Region 4: warm eddy!
+    # else # Region 4: warm eddy!
         x′ = x - 3R
         y′ = y - 3R
 
@@ -66,8 +67,9 @@ end
         ξ = transformR(r, (; R, Lf))
         uθ = warm_eddy_velocity(ξ, z, r, R, Lf)
         θ  = atan(y′, x′)
-        return trig(θ) * uθ
-    end
+        u4 = trig(θ) * uθ
+    
+    return u1 + u2 + u3 + u4
 end
 
 @inline function Tᵢ(x, y, z)

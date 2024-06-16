@@ -76,7 +76,7 @@ end
 @inline Vi(x, y, z) = vᵢ(x, y, z)
 
 set_model!(model::HydrostaticFreeSurfaceModel) = 
-    set!(model, u = uᵢ, v = vᵢ, T = Tᵢ, η = ηᵢ)
+    set!(model, u = uᵢ, v = vᵢ, T = Tᵢ)
 
 set_model!(model::NonhydrostaticModel) = set!(model, T = Tᵢ)
 
