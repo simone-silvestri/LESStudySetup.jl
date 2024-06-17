@@ -83,5 +83,6 @@ times(snapshots::Dict) = snapshots[first(keys(snapshots))].times
 
 include("mixed_layer.jl")
 include("pointwise_diagnostics.jl")
+include("spectra.jl")
 
 end
