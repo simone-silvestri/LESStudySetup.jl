@@ -12,8 +12,6 @@ function spectral_averaging(u::Field; xcutoff = 8kilometer, ycutoff = 8kilometer
     nx = ceil(Int, xcutoff / Δx)
     ny = ceil(Int, ycutoff / Δy)
 
-    @show nx, ny
-
     ū = deepcopy(u)
     d = interior(u)
 
