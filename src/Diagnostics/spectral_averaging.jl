@@ -20,8 +20,6 @@ function spectral_averaging(u::Field; xcutoff = 20kilometer, ycutoff = 20kilomet
 
     d̂ = fft(d)
 
-    @show nx2, ny2, nx, ny
-
     Nx, Ny, _ = size(u)
 
     arch = architecture(u)
