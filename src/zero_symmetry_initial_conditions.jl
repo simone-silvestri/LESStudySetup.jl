@@ -12,21 +12,23 @@ end
 
 @inline function uᵢ(x, y, z)
     Lf = parameters.Lf
-    R  = 25e3
+    Le = parameters.Le
+    R  = parameters.Lx / 4
 
-    return eddy_tangential_velocity(x, y, z, R, Lf, sin)
+    return eddy_tangential_velocity(x, y, z, R, Lf, Le, sin)
 end
 
 @inline minus_cos(θ) = - cos(θ)
 
 @inline function vᵢ(x, y, z)
     Lf = parameters.Lf
-    R  = 25e3
+    Le = parameters.Le
+    R  = parameters.Lx / 4
 
-    return eddy_tangential_velocity(x, y, z, R, Lf, minus_cos)
+    return eddy_tangential_velocity(x, y, z, R, Lf, Le, minus_cos)
 end
 
-@inline function eddy_tangential_velocity(x, y, z, R, Lf, trig)
+@inline function eddy_tangential_velocity(x, y, z, R, Lf, Le, trig)
     # divide into 4 regions
 
     # if x < 50e3 && y < 50e3 # Region 1: warm eddy!
@@ -34,7 +36,7 @@ end
         y′ = y - R
         
         r  = sqrt(x′^2 + y′^2)
-        ξ  = transformR(r, (; R, Lf))
+        ξ  = transformR(r, (; R, Le))
         uθ = warm_eddy_velocity(ξ, z, r, R, Lf)
         θ  = atan(y′, x′)
         u1 = trig(θ) * uθ
@@ -44,7 +46,7 @@ end
         y′ = y - 3R
 
         r  = sqrt(x′^2 + y′^2)
-        ξ  = transformR(r, (; R, Lf))
+        ξ  = transformR(r, (; R, Le))
         uθ = cold_eddy_velocity(ξ, z, r, R, Lf)
         θ  = atan(y′, x′)
         u2 = trig(θ) * uθ
@@ -54,7 +56,7 @@ end
         y′ = y - R
 
         r  = sqrt(x′^2 + y′^2)
-        ξ  = transformR(r, (; R, Lf))
+        ξ  = transformR(r, (; R, Le))
         uθ = cold_eddy_velocity(ξ, z, r, R, Lf)
         θ  = atan(y′, x′)
         u3 = trig(θ) * uθ
@@ -64,7 +66,7 @@ end
         y′ = y - 3R
 
         r = sqrt(x′^2 + y′^2)
-        ξ = transformR(r, (; R, Lf))
+        ξ = transformR(r, (; R, Le))
         uθ = warm_eddy_velocity(ξ, z, r, R, Lf)
         θ  = atan(y′, x′)
         u4 = trig(θ) * uθ
@@ -74,7 +76,7 @@ end
 
 @inline function Tᵢ(x, y, z)
 
-    Lf = parameters.Lf
+    Le = parameters.Le
     R = 25e3
 
     # divide into 4 regions
@@ -83,7 +85,7 @@ end
         y′ = y - R
         
         r = sqrt(x′^2 + y′^2)
-        ξ = transformR(r, (; R, Lf))
+        ξ = transformR(r, (; R, Le))
         return warm_eddy(ξ, x, z)
     
     elseif x < 50e3 && y >= 50e3 # Region 2: cold eddy!
@@ -91,7 +93,7 @@ end
         y′ = y - 3R
 
         r = sqrt(x′^2 + y′^2)
-        ξ = transformR(r, (; R, Lf))
+        ξ = transformR(r, (; R, Le))
         return cold_eddy(ξ, x, z)
 
     elseif x >= 50e3 && y < 50e3 # Region 3: cold eddy!
@@ -99,7 +101,7 @@ end
         y′ = y - R
 
         r = sqrt(x′^2 + y′^2)
-        ξ = transformR(r, (; R, Lf))
+        ξ = transformR(r, (; R, Le))
         return cold_eddy(ξ, x, z)
 
     else # Region 4: warm eddy!
@@ -107,7 +109,7 @@ end
         y′ = y - 3R
 
         r = sqrt(x′^2 + y′^2)
-        ξ = transformR(r, (; R, Lf))
+        ξ = transformR(r, (; R, Le))
         return warm_eddy(ξ, x, z)
     end
 end
