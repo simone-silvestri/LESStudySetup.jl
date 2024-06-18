@@ -102,6 +102,17 @@ function MLD(snapshots, i; threshold = 0.1)
     return h
 end
 
+""" stratification """
+function N²(snapshots, i)
+    α = parameters.α
+    g = parameters.g
+    
+    T = snapshots[:T][i]
+    B = α * g * T
+    
+    return ∂z(B)
+end
+
 """ vertical vorticity """
 function ζ(snapshots, i)
     u = snapshots[:u][i]
