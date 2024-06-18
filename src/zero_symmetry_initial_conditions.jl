@@ -8,7 +8,7 @@
                  2(p.Lx - x) / p.Lx * π * (1 + p.Lf) - π/2 * p.Lf)
 end
 
-@inline transformR(r, p) = 2(p.R - r) / p.R * π * p.Lf - π/2 * (p.Lf - 1)
+@inline transformR(r, p) = 2(p.R - r) / p.R * π * p.Le - π/2 * (p.Le - 1)
 
 @inline function uᵢ(x, y, z)
     Lf = parameters.Lf
@@ -223,7 +223,7 @@ end
 @inline function warm_eddy_velocity(ξ, z, r, R, Lf)
 
     Lz = parameters.Lz
-    ΔT = parameters.ΔT
+    ΔT = parameters.ΔTᵉ
     f  = parameters.f
     α  = parameters.α
     g  = parameters.g
@@ -247,7 +247,7 @@ end
 @inline function cold_eddy_velocity(ξ, z, r, R, Lf)
 
     Lz = parameters.Lz
-    ΔT = parameters.ΔT
+    ΔT = parameters.ΔTᵉ
     f  = parameters.f
     α  = parameters.α
     g  = parameters.g

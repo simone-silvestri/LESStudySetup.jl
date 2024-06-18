@@ -46,6 +46,7 @@ A mutable struct representing the constants used in the LES study setup.
      α  :: Float64 = 2e-4
      Φ  :: Float64 = 0.075
     Lf  :: Float64 = 0.9
+    Le  :: Float64 = 0.9
     σ²  :: Float64 = 0.15
      g  :: Float64 = Oceananigans.BuoyancyModels.g_Earth
 end
@@ -73,6 +74,7 @@ Base.show(io::IO, c::ProblemConstants) =
               "├── barotropic vortex:              Φ = ", c.Φ,  "\n",
               "├── gravity:                        g = ", c.g,  "\n",
               "├── Initial vortex spread:         σ² = ", c.σ², "\n",
+              "├── Eddy frontal width:            Le = ", c.Le, "\n",
               "└── Frontal width:                 Lf = ", c.Lf, "\n")
 
 # The constants of the idealized setup
