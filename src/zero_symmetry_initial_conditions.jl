@@ -113,7 +113,7 @@ end
 end
 
 @inline function T̅(χ) 
-    ΔT = parameters.ΔT 
+    ΔT = parameters.ΔTᶠ
     T₀ = parameters.T₀
     
     T₃ = 1 - (π - χ - sin(π - χ) * cos(π - χ)) / π
@@ -148,7 +148,7 @@ end
 
     Lz = parameters.Lz
     T₀ = parameters.T₀
-    ΔT = parameters.ΔT
+    ΔT = parameters.ΔTᵉ
     Lf = parameters.Lf
     Lx = parameters.Lx
 
@@ -169,7 +169,7 @@ end
 
     Lz = parameters.Lz
     T₀ = parameters.T₀
-    ΔT = parameters.ΔT
+    ΔT = parameters.ΔTᵉ
     Lf = parameters.Lf
     Lx = parameters.Lx
 
