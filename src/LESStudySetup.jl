@@ -7,7 +7,6 @@ export set_value!, set!
 using Reexport
 @reexport using Oceananigans
 using Oceananigans.Units
-using Oceananigans.TurbulenceClosures.CATKEVerticalDiffusivities: CATKEVerticalDiffusivity
 using Printf
 
 include("xin_kai_vertical_diffusivity.jl")
