@@ -50,7 +50,7 @@ function idealized_setup(arch;
                            x = (0, Lx), 
                            y = (0, Ly), 
                            z = (-Lz, 0),
-                           halo = (4, 4, 4))
+                           halo = (6, 6, 6))
 
     @info "Running on a grid with $Nx, $Ny, and $Nz cells"
 
