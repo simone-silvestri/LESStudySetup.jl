@@ -1,5 +1,6 @@
 using Oceananigans.Grids: node
 using Oceananigans.Advection: TracerAdvection
+using Oceananigans.TurbulenceClosures.TKEBasedVerticalDiffusivities: CATKEMixingLength, CATKEVerticalDiffusivity
 using Statistics: mean
 
 model_type(::Val{true})  = HydrostaticFreeSurfaceModel
