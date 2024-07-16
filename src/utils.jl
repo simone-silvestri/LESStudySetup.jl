@@ -1,4 +1,5 @@
 using Oceananigans.Grids: node
+using Oceananigans.Advection: TracerAdvection
 using Statistics: mean
 
 model_type(::Val{true})  = HydrostaticFreeSurfaceModel
@@ -23,10 +24,12 @@ end
 function model_settings(::Type{HydrostaticFreeSurfaceModel}, grid;
                         restoring = false)
     
-    momentum_advection = WENO(; order = 7)
-    tracer_advection   = WENO(; order = 7)
-    closure = XinKaiVerticalDiffusivity()
-    tracers = :T
+    momentum_advection = WENOVectorInvariant()
+    tracer_advection   = TracerAdvection(WENO(; order = 7), WENO(; order = 7), Centered())
+    
+    mixing_length = CATKEMixingLength(Cᵇ = 0.01)
+    closure = CATKEVerticalDiffusivity(; mixing_length)
+    tracers = (:T, :e)
 
     Tm = Field{Center, Nothing, Nothing}(grid)
     Um = Field{Face,   Center,  Nothing}(grid)
