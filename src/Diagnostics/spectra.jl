@@ -36,4 +36,3 @@ function power_cospectrum_1d(var1, var2, x)
     end
     return Spectrum(spectra, freqs)
 end
-

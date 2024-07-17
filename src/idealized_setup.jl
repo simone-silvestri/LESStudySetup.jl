@@ -23,7 +23,7 @@ Finally, a `Simulation` object is created with the model, time step, and stop ti
 function idealized_setup(arch; 
                          stop_time = 100days,
                          hydrostatic_approximation = false,
-                         restoring = true)
+                         restoring = false)
     
     # Retrieving the problem constants
     Δh = parameters.Δh 
