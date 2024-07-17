@@ -49,8 +49,6 @@ function spatial_filtering(u::Field;
 
     iterations = ceil(Int, smoothing_range / Δs) ÷ 2
 
-    @show iterations
-
     arch = architecture(u)
     grid = u.grid
 

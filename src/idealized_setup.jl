@@ -23,7 +23,7 @@ Finally, a `Simulation` object is created with the model, time step, and stop ti
 function idealized_setup(arch; 
                          stop_time = 100days,
                          hydrostatic_approximation = false,
-                         restoring = true)
+                         restoring = false)
     
     # Retrieving the problem constants
     Δh = parameters.Δh 
@@ -50,7 +50,7 @@ function idealized_setup(arch;
                            x = (0, Lx), 
                            y = (0, Ly), 
                            z = (-Lz, 0),
-                           halo = (4, 4, 4))
+                           halo = (6, 6, 6))
 
     @info "Running on a grid with $Nx, $Ny, and $Nz cells"
 
