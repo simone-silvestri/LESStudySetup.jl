@@ -1,3 +1,5 @@
 Manifest.toml
 *.jld2
 *.mp4
+slurm/*
+julia_submit.slurm

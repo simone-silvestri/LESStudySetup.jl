@@ -113,6 +113,16 @@ function N²(snapshots, i)
     return ∂z(B)
 end
 
+""" horizontal vorticity """
+function ωH(snapshots, i)
+    u = snapshots[:u][i]
+    v = snapshots[:v][i]
+    w = snapshots[:w][i]
+    ωx = ∂y(w) - ∂z(v)
+    ωy = ∂z(u) - ∂x(w)
+    return (ωx^2 + ωy^2)^0.5
+end
+
 """ vertical vorticity """
 function ζ(snapshots, i)
     u = snapshots[:u][i]
