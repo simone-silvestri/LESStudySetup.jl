@@ -32,10 +32,10 @@ struct ForcedAdvection{N, FT, A, U, V, W} <: AbstractAdvectionScheme{N, FT}
 end
 
 Adapt.adapt_structure(to, s::ForcedAdvection{N, FT}) where {N, FT} = 
-    ForcingAdvection{N, FT}(Adapt.adapt(to, s.scheme), 
-                            Adapt.adapt(to, s.u_background), 
-                            Adapt.adapt(to, s.v_background), 
-                            Adapt.adapt(to, s.w_background))
+    ForcedAdvection{N, FT}(Adapt.adapt(to, s.scheme), 
+                           Adapt.adapt(to, s.u_background), 
+                           Adapt.adapt(to, s.v_background), 
+                           Adapt.adapt(to, s.w_background))
 
 function ForcedAdvection(; scheme,
                          u_background = ZeroField(eltype(scheme)),
