@@ -1,5 +1,12 @@
-using Oceananigans.Advection: required_halo_size, AbstractAdvectionScheme
 using Oceananigans.Advection: div_𝐯u, div_𝐯v
+
+using Oceananigans.Advection: 
+            AbstractAdvectionScheme,
+            _advective_tracer_flux_x,
+            _advective_tracer_flux_y,
+            _advective_tracer_flux_z,
+            required_halo_size
+
 using Oceananigans.Fields: ZeroField
 using Oceananigans.Utils: SumOfArrays
 using Oceananigans.Operators
