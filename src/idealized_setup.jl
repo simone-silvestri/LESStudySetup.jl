@@ -23,7 +23,7 @@ Finally, a `Simulation` object is created with the model, time step, and stop ti
 function idealized_setup(arch; 
                          stop_time = 100days,
                          hydrostatic_approximation = false,
-                         restoring = false)
+                         background_forcing = false)
     
     # Retrieving the problem constants
     Δh = parameters.Δh 
@@ -56,7 +56,7 @@ function idealized_setup(arch;
 
     # ModelType can be either a `HydrostaticFreeSurfaceModel` or a `NonhydrostaticModel`
     ModelType = model_type(Val(hydrostatic_approximation))
-    settings  = model_settings(ModelType, grid; restoring)
+    settings  = model_settings(ModelType, grid; background_forcing)
 
     coriolis = FPlane(; f)
     buoyancy = SeawaterBuoyancy(; equation_of_state = LinearEquationOfState(thermal_expansion = α), 
@@ -81,8 +81,12 @@ function idealized_setup(arch;
                         boundary_conditions,
                         settings...)
 
-    set_model!(model)
-
+    if model.advection.u isa ForcedAdvection 
+        set!(model, T = Tᵢ) 
+    else
+        set!(model, u = uᵢ, v = vᵢ, T = Tᵢ)
+    end
+    
     u, v, w = model.velocities
 
     u_max = max(maximum(abs, u), maximum(abs, v))

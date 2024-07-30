@@ -8,12 +8,12 @@ using Reexport
 @reexport using Oceananigans
 using Oceananigans.Units
 using Printf
+using Adapt
 
-include("xin_kai_vertical_diffusivity.jl")
 include("parameters.jl")
-include("utils.jl")
-include("zero_symmetry_initial_conditions.jl")
-# include("barotropic_initial_conditions.jl")
+include("initial_conditions.jl")
+include("background_field_forcing.jl")
+include("model_setup.jl")
 include("idealized_setup.jl")
 include("Diagnostics/Diagnostics.jl")
 
