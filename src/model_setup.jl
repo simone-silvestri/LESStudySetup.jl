@@ -20,7 +20,7 @@ function model_settings(model_type, grid; background_forcing = false)
         advection = ForcedAdvection(; scheme = advection,
                                       u_background,
                                       v_background)
-    else
+    end
 
     if model_type == HydrostaticFreeSurfaceModel # Additional stuff to add if 
         mixing_length = CATKEMixingLength(Cᵇ = 0.01)
@@ -30,9 +30,14 @@ function model_settings(model_type, grid; background_forcing = false)
         free_surface = SplitExplicitFreeSurface(grid; substeps = 75, gravitational_acceleration = parameters.g)
         @info "running with $(length(free_surface.settings.substepping.averaging_weights)) substeps"
 
-        return (; closure, tracers, free_surface, momentum_advection = advection, tracer_advection = advection)
+        return (; closure, 
+                  tracers, 
+                  free_surface, 
+                  momentum_advection = advection, 
+                  tracer_advection = advection)
     else
-        return (; tracers = :T, advection)
+        return (; tracers = :T, 
+                  advection)
     end
 end
 

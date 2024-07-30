@@ -81,7 +81,7 @@ function idealized_setup(arch;
                         boundary_conditions,
                         settings...)
 
-    if model.advection.u isa ForcedAdvection 
+    if model.advection.momentum isa ForcedAdvection 
         set!(model, T = Tᵢ) 
     else
         set!(model, u = uᵢ, v = vᵢ, T = Tᵢ)
@@ -96,8 +96,6 @@ function idealized_setup(arch;
     wizard = TimeStepWizard(cfl = 0.25, max_change = 1.1)
 
     simulation = Simulation(model; Δt, stop_time)
-
-    simulation_callbacks!(simulation, restoring)
 
     simulation.callbacks[:progress] = Callback(progress, IterationInterval(100))
     simulation.callbacks[:wizard] = Callback(wizard, IterationInterval(10))

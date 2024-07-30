@@ -1,11 +1,19 @@
-using Oceananigans.Advection: required_halo_size
 using Oceananigans.Advection: div_𝐯u, div_𝐯v
+
+using Oceananigans.Advection: 
+            AbstractAdvectionScheme,
+            _advective_tracer_flux_x,
+            _advective_tracer_flux_y,
+            _advective_tracer_flux_z,
+            required_halo_size
+
 using Oceananigans.Fields: ZeroField
 using Oceananigans.Utils: SumOfArrays
 using Oceananigans.Operators
 
 using Adapt 
 
+import Base
 import Oceananigans.Advection: div_Uc, U_dot_∇u, U_dot_∇v
 
 """
@@ -20,7 +28,7 @@ struct ForcedAdvection{N, FT, A, U, V, W} <: AbstractAdvectionScheme{N, FT}
     v_background :: V
     w_background :: W
 
-    ForcedAdvection{N, FT}(s::A, u::U, v::V, w::W) where {N, FT, U, V, W} = new{N, FT, U, V, W}(s, u, v, w)
+    ForcedAdvection{N, FT}(s::A, u::U, v::V, w::W) where {N, FT, A, U, V, W} = new{N, FT, A, U, V, W}(s, u, v, w)
 end
 
 Adapt.adapt_structure(to, s::ForcedAdvection{N, FT}) where {N, FT} = 
@@ -39,6 +47,14 @@ function ForcedAdvection(; scheme,
 
     return ForcedAdvection{N, FT}(scheme, u_background, v_background, w_background)
 end
+
+Base.show(io::IO, f::ForcedAdvection) = 
+    print(io, "ForcedAdvection with:", '\n',
+              "├── scheme: ", summary(f.scheme), '\n',
+              "└── background velocities: ", '\n',
+              "    ├── u: ", summary(f.u_background), '\n',
+              "    ├── v: ", summary(f.v_background), '\n',
+              "    └── w: ", summary(f.w_background))
 
 @inline function U_dot_∇u(i, j, k, grid::RectilinearGrid, advection::ForcedAdvection, U) 
 
