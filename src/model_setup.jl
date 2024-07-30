@@ -29,7 +29,7 @@ function model_settings(model_type, grid; background_forcing = false)
 
         free_surface = SplitExplicitFreeSurface(grid; substeps = 75, gravitational_acceleration = parameters.g)
         @info "running with $(length(free_surface.settings.substepping.averaging_weights)) substeps"
-
+       
         return (; closure, 
                   tracers, 
                   free_surface, 
