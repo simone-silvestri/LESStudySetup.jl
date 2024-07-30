@@ -20,7 +20,7 @@ function model_settings(model_type, grid; background_forcing = false)
         advection = ForcedAdvection(; scheme = advection,
                                       u_background,
                                       v_background)
-    else
+    end
 
     if model_type == HydrostaticFreeSurfaceModel # Additional stuff to add if 
         mixing_length = CATKEMixingLength(Cᵇ = 0.01)
