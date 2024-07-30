@@ -1,4 +1,4 @@
-using Oceananigans.Advection: required_halo_size
+using Oceananigans.Advection: required_halo_size, AbstractAdvectionScheme
 using Oceananigans.Advection: div_𝐯u, div_𝐯v
 using Oceananigans.Fields: ZeroField
 using Oceananigans.Utils: SumOfArrays
