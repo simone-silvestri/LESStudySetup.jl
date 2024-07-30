@@ -20,7 +20,7 @@ struct ForcedAdvection{N, FT, A, U, V, W} <: AbstractAdvectionScheme{N, FT}
     v_background :: V
     w_background :: W
 
-    ForcedAdvection{N, FT}(s::A, u::U, v::V, w::W) where {N, FT, U, V, W} = new{N, FT, U, V, W}(s, u, v, w)
+    ForcedAdvection{N, FT}(s::A, u::U, v::V, w::W) where {N, FT, A, U, V, W} = new{N, FT, A, U, V, W}(s, u, v, w)
 end
 
 Adapt.adapt_structure(to, s::ForcedAdvection{N, FT}) where {N, FT} = 
