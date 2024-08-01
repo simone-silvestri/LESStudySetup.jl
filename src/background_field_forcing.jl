@@ -66,7 +66,7 @@ Base.show(io::IO, f::ForcedAdvection) =
 
     total_velocities = (; u, v, w)
 
-    return div_𝐯u(i, j, k, grid, scheme, total_velocities, U.u)
+    return div_𝐯u(i, j, k, grid, scheme, total_velocities, total_velocities.u)
 end
 
 @inline function U_dot_∇v(i, j, k, grid::RectilinearGrid, advection::ForcedAdvection, U) 
@@ -79,7 +79,7 @@ end
 
     total_velocities = (; u, v, w)
 
-    return div_𝐯v(i, j, k, grid, scheme, total_velocities, U.v)
+    return div_𝐯v(i, j, k, grid, scheme, total_velocities, total_velocities.v)
 end
 
 @inline function div_Uc(i, j, k, grid, advection::ForcedAdvection, U, c)
