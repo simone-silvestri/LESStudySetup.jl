@@ -20,8 +20,10 @@ function run_experiment!(experiment;
                          σ²  = 0.15, # Initial spread of the barotropic eddy
                          N²  = 2e-6, # Initial stratification below the thermocline
                          output_frequency = 3hours,
+                         checkpoint_frequency = 3hours,
                          stop_time = 20days,
-                         restoring = false)
+                         restoring = false,
+                         restart_file = nothing)
     
     set_value!(; Q, τw, θ, ΔTᵉ, ΔTᶠ, Lf, N², σ², Δh)
 
@@ -38,6 +40,11 @@ function run_experiment!(experiment;
     # Let's attach some outputs
     model         = simulation.model
     output_fields = merge(model.velocities, model.tracers)
+
+    simulation.output_writers[:checkpoint] = Chekpointer(model;
+                                                         schedule = TimeInterval(checkpoint_frequency),
+                                                         prefix = "hydrostatic_",
+                                                         overwrite_existing = true)
 
     simulation.output_writers[:snapshots] = JLD2OutputWriter(model, output_fields;
                                                              schedule = ConsecutiveIterations(TimeInterval(output_frequency)),
@@ -58,7 +65,7 @@ function run_experiment!(experiment;
     ##### Let's run!!!!
     #####
 
-    run!(simulation)
+    run!(simulation; pickup = restart_file)
 
     return simulation
 end
