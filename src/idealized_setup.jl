@@ -89,7 +89,7 @@ function idealized_setup(arch;
     
     u, v, w = model.velocities
 
-    u_max = max(maximum(abs, u), maximum(abs, v))
+    u_max = max(maximum(abs, interior(u)), maximum(abs, interior(v)))
 
     Δt = min(0.2 * Δh / u_max, 100)
     
